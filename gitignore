@@ -1,0 +1,9 @@
+# Ignore editor junk
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Ignore build tools that may be added later
+/target/
+/dist/

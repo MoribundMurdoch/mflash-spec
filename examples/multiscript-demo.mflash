@@ -1,0 +1,59 @@
+
+---
+
+# 📄 **examples/multiscript-demo.mflash**
+
+```json
+{
+  "format": "mflash",
+  "version": 1,
+
+  "title": "Multiscript Demo Deck",
+  "description": "Tests multiple languages and scripts.",
+  "snippet": "English, Japanese, Korean, Georgian, Russian…",
+
+  "default_term_lang": "en",
+  "default_def_lang": "en",
+
+  "deck_tags": ["demo", "multilingual"],
+  "cover_media": "cover.png",
+
+  "cards": [
+    {
+      "term": "Hello",
+      "definition": "こんにちは",
+      "term_lang": "en",
+      "def_lang": "ja",
+      "tags": ["basic"],
+      "examples": ["Hello → こんにちは"],
+      "notes": null
+    },
+    {
+      "term": "ありがとう",
+      "definition": "Thank you",
+      "term_lang": "ja",
+      "def_lang": "en",
+      "tags": ["basic"],
+      "examples": ["ありがとう → Thank you"],
+      "notes": null
+    },
+    {
+      "term": "გამარჯობა",
+      "definition": "Hello (Georgian)",
+      "term_lang": "ka",
+      "def_lang": "en",
+      "tags": ["greeting"],
+      "examples": ["გამარჯობა!"],
+      "notes": "Georgian script"
+    },
+    {
+      "term": "Спасибо",
+      "definition": "Thank you",
+      "term_lang": "ru",
+      "def_lang": "en",
+      "tags": ["basic"],
+      "examples": ["Спасибо → Thank you"],
+      "notes": null
+    }
+  ]
+}

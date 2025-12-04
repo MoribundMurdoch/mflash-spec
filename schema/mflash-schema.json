@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mflash v1",
+  "type": "object",
+
+  "required": ["format", "version", "title", "deck_tags", "cards"],
+
+  "properties": {
+    "format": { "const": "mflash" },
+    "version": { "type": "integer", "const": 1 },
+
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "snippet": { "type": "string" },
+
+    "default_term_lang": { "type": "string" },
+    "default_def_lang": { "type": "string" },
+
+    "deck_tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+
+    "cover_media": { "type": "string" },
+
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition", "tags", "examples"],
+        "properties": {
+          "term": { "type": "string" },
+          "definition": { "type": "string" },
+          "term_lang": { "type": "string" },
+          "def_lang": { "type": "string" },
+          "hyperlink": { "type": "string" },
+          "media": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}
