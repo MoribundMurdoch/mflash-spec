@@ -2,9 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "mflash v1",
   "type": "object",
-
   "required": ["format", "version", "title", "deck_tags", "cards"],
-
   "properties": {
     "format": { "const": "mflash" },
     "version": { "type": "integer", "const": 1 },
@@ -42,8 +40,7 @@
           "examples": {
             "type": "array",
             "items": { "type": "string" }
-          },
-          "notes": { "type": "string" }
+          }
         }
       }
     }
