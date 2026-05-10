@@ -1,46 +1,176 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "mflash v1",
+  "description": "Schema for mflash deck JSON, used by raw .mflash.json files and deck.json inside packaged .mflash archives.",
   "type": "object",
-  "required": ["format", "version", "title", "deck_tags", "cards"],
+  "additionalProperties": true,
+  "required": [
+    "format",
+    "version",
+    "title",
+    "cards"
+  ],
   "properties": {
-    "format": { "const": "mflash" },
-    "version": { "type": "integer", "const": 1 },
-
-    "title": { "type": "string" },
-    "description": { "type": "string" },
-    "snippet": { "type": "string" },
-
-    "default_term_lang": { "type": "string" },
-    "default_def_lang": { "type": "string" },
-
+    "format": {
+      "const": "mflash"
+    },
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "snippet": {
+      "type": "string"
+    },
+    "default_term_lang": {
+      "type": "string"
+    },
+    "default_def_lang": {
+      "type": "string"
+    },
     "deck_tags": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
-
-    "cover_media": { "type": "string" },
-
+    "cover_media": {
+      "type": "string"
+    },
     "cards": {
       "type": "array",
       "items": {
-        "type": "object",
-        "required": ["term", "definition", "tags", "examples"],
-        "properties": {
-          "term": { "type": "string" },
-          "definition": { "type": "string" },
-          "term_lang": { "type": "string" },
-          "def_lang": { "type": "string" },
-          "hyperlink": { "type": "string" },
-          "media": { "type": "string" },
-          "tags": {
-            "type": "array",
-            "items": { "type": "string" }
+        "$ref": "#/$defs/card"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "card": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "term",
+        "definition"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "term": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "string"
+        },
+        "term_lang": {
+          "type": "string"
+        },
+        "def_lang": {
+          "type": "string"
+        },
+        "phonetic": {
+          "type": "string"
+        },
+        "part_of_speech": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "hyperlink": {
+          "type": "string"
+        },
+        "media": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/media"
+              }
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "examples": {
-            "type": "array",
-            "items": { "type": "string" }
-          }
+          "default": []
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/example"
+              }
+            ]
+          },
+          "default": []
+        }
+      }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "type",
+        "src"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "image",
+            "audio",
+            "video",
+            "gif",
+            "other"
+          ]
+        },
+        "src": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "example": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "translation": {
+          "type": "string"
+        },
+        "lang": {
+          "type": "string"
+        },
+        "translation_lang": {
+          "type": "string"
         }
       }
     }

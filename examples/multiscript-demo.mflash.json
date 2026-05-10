@@ -1,59 +1,113 @@
-
----
-
-# 📄 **examples/multiscript-demo.mflash**
-
-```json
 {
   "format": "mflash",
   "version": 1,
-
-  "title": "Multiscript Demo Deck",
-  "description": "Tests multiple languages and scripts.",
-  "snippet": "English, Japanese, Korean, Georgian, Russian…",
-
-  "default_term_lang": "en",
+  "title": "Bad Hair Ahaha",
+  "description": "A very serious multilingual deck about hair whatnot.",
+  "snippet": "Hair, language, and assorted follicular situations.",
+  "default_term_lang": "et",
   "default_def_lang": "en",
-
-  "deck_tags": ["demo", "multilingual"],
+  "deck_tags": [
+    "estonian",
+    "english",
+    "hair",
+    "example-deck"
+  ],
   "cover_media": "cover.png",
-
   "cards": [
     {
-      "term": "Hello",
-      "definition": "こんにちは",
-      "term_lang": "en",
-      "def_lang": "ja",
-      "tags": ["basic"],
-      "examples": ["Hello → こんにちは"],
-      "notes": null
+      "id": "card-001",
+      "term": "halb soeng",
+      "definition": "Bad hair; a follicular situation.",
+      "term_lang": "et",
+      "def_lang": "en",
+      "phonetic": "HAHLB soh-eng",
+      "part_of_speech": "noun phrase",
+      "notes": "A useful phrase for describing the sort of hair situation that has become everybody else's business.",
+      "hyperlink": "https://en.wiktionary.org/wiki/soeng",
+      "examples": [
+        {
+          "text": "Mul on täna halb soeng.",
+          "translation": "I have bad hair today.",
+          "lang": "et",
+          "translation_lang": "en"
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "src": "media/card-001-image.png",
+          "alt": "A blue-tinted illustration of chaotic bad hair."
+        },
+        {
+          "type": "audio",
+          "src": "media/card-001-audio.mp3",
+          "description": "Pronunciation audio for halb soeng."
+        }
+      ],
+      "tags": [
+        "hair",
+        "appearance",
+        "estonian"
+      ]
     },
     {
-      "term": "ありがとう",
-      "definition": "Thank you",
-      "term_lang": "ja",
+      "id": "card-002",
+      "term": "juuksed",
+      "definition": "Hair.",
+      "term_lang": "et",
       "def_lang": "en",
-      "tags": ["basic"],
-      "examples": ["ありがとう → Thank you"],
-      "notes": null
+      "phonetic": "YOO-ksehd",
+      "part_of_speech": "noun",
+      "notes": "General word for hair.",
+      "examples": [
+        {
+          "text": "Tema juuksed on pikad.",
+          "translation": "Their hair is long.",
+          "lang": "et",
+          "translation_lang": "en"
+        }
+      ],
+      "media": [
+        {
+          "type": "video",
+          "src": "media/card-002-video.mp4",
+          "description": "Short video showing hair movement."
+        }
+      ],
+      "tags": [
+        "body",
+        "estonian"
+      ]
     },
     {
-      "term": "გამარჯობა",
-      "definition": "Hello (Georgian)",
-      "term_lang": "ka",
+      "id": "card-003",
+      "term": "soeng",
+      "definition": "Hairstyle.",
+      "term_lang": "et",
       "def_lang": "en",
-      "tags": ["greeting"],
-      "examples": ["გამარჯობა!"],
-      "notes": "Georgian script"
-    },
-    {
-      "term": "Спасибо",
-      "definition": "Thank you",
-      "term_lang": "ru",
-      "def_lang": "en",
-      "tags": ["basic"],
-      "examples": ["Спасибо → Thank you"],
-      "notes": null
+      "phonetic": "SOH-eng",
+      "part_of_speech": "noun",
+      "notes": "Useful for talking about styled hair rather than hair in general.",
+      "examples": [
+        {
+          "text": "See soeng on väga dramaatiline.",
+          "translation": "This hairstyle is very dramatic.",
+          "lang": "et",
+          "translation_lang": "en"
+        }
+      ],
+      "media": [
+        {
+          "type": "gif",
+          "src": "media/card-003-animation.gif",
+          "alt": "Animated hairstyle transformation."
+        }
+      ],
+      "tags": [
+        "hair",
+        "style",
+        "estonian"
+      ]
     }
   ]
 }
