@@ -689,9 +689,264 @@ The deck cover is for deck identity, library display, thumbnails, storefront-sty
 Card media is for study content.
 Deck cover images should not be mixed into individual card asset folders.
 
+## 4. Polyglot Language Support
+
+mflash v3 preserves polyglot language support.
+
+Decks may define default languages for terms and definitions. Individual cards may override those defaults. Media objects may also specify their own language when relevant, especially for pronunciation audio, listening cards, and example audio.
+
+This allows a deck to define broad language behavior while still supporting mixed-language or multilingual cards.
+
 ---
 
-## 4. Summary of v3 Design Rules
+### 4.1 Deck-level language defaults
+
+A deck may define default languages for card terms and definitions.
+
+Example:
+
+```json
+{
+  "default_term_lang": "fr-FR",
+  "default_def_lang": "en-US"
+}
+```
+
+#### default_term_lang
+
+The `default_term_lang` field defines the default BCP 47 language tag for card terms when a card does not specify `term_lang`.
+
+Example:
+
+```json
+"default_term_lang": "fr-FR"
+```
+
+#### default_def_lang
+
+The `default_def_lang` field defines the default BCP 47 language tag for card definitions when a card does not specify `def_lang`.
+
+Example:
+
+```json
+"default_def_lang": "en-US"
+```
+
+Applications may use these fields for text-to-speech, language display, search, sorting, filtering, import/export behavior, and accessibility features.
+
+---
+
+### 4.2 Card-level language overrides
+
+A card may override the deck-level language defaults.
+
+Example:
+
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "Weltanschauung",
+  "definition": "worldview",
+  "term_lang": "de-DE",
+  "def_lang": "en-US"
+}
+```
+
+#### term_lang
+
+The `term_lang` field defines the BCP 47 language tag for the card's term.
+
+If `term_lang` is present, it overrides the deck's `default_term_lang` for that card.
+
+#### def_lang
+
+The `def_lang` field defines the BCP 47 language tag for the card's definition.
+
+If `def_lang` is present, it overrides the deck's `default_def_lang` for that card.
+
+---
+
+### 4.3 Media-level language
+
+Media objects may define their own language with `lang`.
+
+This is especially useful for pronunciation audio, listening prompts, spoken examples, explanation audio, and media where language-specific behavior matters.
+
+Example:
+
+```json
+{
+  "id": "audio_001",
+  "type": "audio",
+  "role": "term_pronunciation",
+  "src": "assets/cards/card_001/weltanschauung.mp3",
+  "lang": "de-DE"
+}
+```
+
+#### lang
+
+The `lang` field defines the BCP 47 language tag for a media object.
+
+If `lang` is present on a media object, it should be treated as the most specific language metadata for that media item.
+
+---
+
+### 4.4 Example language fields
+
+Examples may continue to use language metadata.
+
+Example:
+
+```json
+{
+  "text": "Je voudrais du café.",
+  "translation": "I would like some coffee.",
+  "lang": "fr-FR",
+  "translation_lang": "en-US"
+}
+```
+
+#### lang
+
+The `lang` field defines the language of the example text.
+
+#### translation_lang
+
+The `translation_lang` field defines the language of the example translation.
+
+---
+
+### 4.5 Language fallback order
+
+Applications should use the most specific available language field.
+
+General fallback order:
+
+1. media `lang`
+2. card language override
+3. deck language default
+4. application fallback
+
+For term pronunciation:
+
+1. `media.lang`
+2. `card.term_lang`
+3. `deck.default_term_lang`
+4. application fallback
+
+For definition pronunciation:
+
+1. `media.lang`
+2. `card.def_lang`
+3. `deck.default_def_lang`
+4. application fallback
+
+For example text:
+
+1. `example.lang`
+2. `card.term_lang` or `card.def_lang`, depending on context
+3. `deck.default_term_lang` or `deck.default_def_lang`, depending on context
+4. application fallback
+
+For example translation:
+
+1. `example.translation_lang`
+2. `deck.default_def_lang`
+3. application fallback
+
+---
+
+### 4.6 TTS behavior
+
+Applications that support text-to-speech should respect card-level overrides before deck-level defaults.
+
+For a basic term-definition card:
+
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "bonjour",
+  "definition": "hello"
+}
+```
+
+With deck defaults:
+
+```json
+{
+  "default_term_lang": "fr-FR",
+  "default_def_lang": "en-US"
+}
+```
+
+The application should interpret:
+
+- term language = `fr-FR`
+- definition language = `en-US`
+
+If the card overrides the term language:
+
+```json
+{
+  "id": "card_002",
+  "kind": "basic",
+  "term": "Weltanschauung",
+  "definition": "worldview",
+  "term_lang": "de-DE"
+}
+```
+
+The application should interpret:
+
+- term language = `de-DE`
+- definition language = `en-US`
+
+When uploaded pronunciation audio exists, applications may prefer the uploaded audio file over generated TTS, depending on user settings.
+
+Recommended playback order:
+
+1. If file audio is enabled and matching pronunciation audio exists, play the file.
+2. Otherwise, if TTS is enabled, speak using the language fallback rules.
+
+---
+
+### 4.7 BCP 47 language tags
+
+Language fields should use BCP 47 language tags when possible.
+
+Examples:
+
+- `en`
+- `en-US`
+- `en-GB`
+- `fr`
+- `fr-FR`
+- `de-DE`
+- `ja-JP`
+- `zh-CN`
+- `es-MX`
+
+Applications may accept common language names or aliases in their user interface, but saved mflash files should prefer BCP 47 tags.
+
+---
+
+### 4.8 Polyglot support checklist
+
+- [x] Keep `default_term_lang` on deck.
+- [x] Keep `default_def_lang` on deck.
+- [x] Keep optional `term_lang` on cards.
+- [x] Keep optional `def_lang` on cards.
+- [x] Add optional `lang` to media objects.
+- [x] Keep `lang` and `translation_lang` on examples.
+- [x] Document fallback order: media lang > card lang > deck default.
+- [x] Ensure TTS uses card override before deck default.
+
+---
+
+## 5. Summary of v3 Design Rules
 
 * [x] mflash v3 decks are still JSON-first.
 * [x] Packaged .mflash files are ZIP archives.
