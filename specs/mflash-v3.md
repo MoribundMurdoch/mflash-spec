@@ -2912,3 +2912,365 @@ The corresponding JSON should use:
 - [x] `ellipse`: `x`, `y`, `w`, `h`
 - [x] `polygon`: `points` array
 
+## 10. Package Asset Rules
+
+mflash v3 defines a standard package layout for `.mflash` archives.
+
+A packaged `.mflash` file is a ZIP archive. The deck data lives in `deck.json` at the archive root. Media and other supporting files live under `assets/`.
+
+---
+
+## 10. Package Asset Rules
+
+mflash v3 defines a standard package layout for `.mflash` archives.
+
+A packaged `.mflash` file is a ZIP archive. The deck data lives in `deck.json` at the archive root. Media and other supporting files live under `assets/`.
+
+---
+
+### 10.1 Official v3 package layout
+
+Official v3 package layout:
+```text
+deck.json
+assets/
+  deck/
+  cards/
+    <card_id>/
+```
+
+**Example:**
+```text
+deck.json
+assets/
+  deck/
+    cover.png
+  cards/
+    card_001/
+      lative.mp3
+      illustration.png
+    card_002/
+      heart.png
+```
+
+---
+
+### 10.2 `deck.json` is required at root
+
+Every packaged `.mflash` archive must contain `deck.json` at the archive root.
+
+**Valid:**
+```text
+deck.json
+assets/deck/cover.png
+assets/cards/card_001/image.png
+```
+
+**Invalid:**
+```text
+data/deck.json
+mflash/deck.json
+assets/deck.json
+```
+
+Applications should reject packaged decks that do not contain root-level `deck.json`.
+
+---
+
+### 10.3 `assets/` is the standard asset folder
+
+All v3 packaged assets should live under:
+```text
+assets/
+```
+
+This includes:
+- Deck cover images
+- Card images
+- Pronunciation audio
+- Question audio
+- Answer audio
+- Example audio
+- Videos
+- GIFs
+- Image occlusion base images
+- Documents
+- Supplementary files
+
+Applications may preserve unknown legacy files outside `assets/`, but v3-authored packages should place new assets under `assets/`.
+
+---
+
+### 10.4 Deck-level assets
+
+Deck-level assets should live under:
+```text
+assets/deck/
+```
+
+Use this folder for files that belong to the deck itself rather than to a specific card.
+
+**Recommended examples:**
+- `assets/deck/cover.png`
+- `assets/deck/banner.png`
+- `assets/deck/icon.png`
+
+The most common deck-level asset is the deck cover:
+```json
+"cover": {
+  "id": "cover_001",
+  "type": "image",
+  "role": "cover",
+  "src": "assets/deck/cover.png",
+  "alt": "Deck cover image"
+}
+```
+
+Deck-level assets are for deck identity, library display, thumbnails, file previews, and app presentation.
+
+---
+
+### 10.5 Card-level assets
+
+Card-level assets should live under:
+```text
+assets/cards/<card_id>/
+```
+
+**Example paths:**
+- `assets/cards/card_001/lative.mp3`
+- `assets/cards/card_001/illustration.png`
+- `assets/cards/card_002/heart.png`
+
+Card-level assets are study content attached to a specific card. Examples include:
+- Term pronunciation audio
+- Definition pronunciation audio
+- Illustrations
+- Prompt images
+- Answer images
+- Videos
+- GIFs
+- Image occlusion base images
+- Example audio
+
+**Example card media:**
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "Lative",
+  "definition": "Indicating motion up to or as far as.",
+  "media": [
+    {
+      "id": "audio_term_001",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_001/lative.mp3",
+      "lang": "en-US"
+    },
+    {
+      "id": "img_001",
+      "type": "image",
+      "role": "illustration",
+      "src": "assets/cards/card_001/illustration.png",
+      "alt": "Illustration for the term"
+    }
+  ]
+}
+```
+
+---
+
+### 10.6 Relative packaged paths
+
+In packaged `.mflash` decks, all `src` paths should be relative to the package root.
+
+**Valid:**
+```text
+assets/deck/cover.png
+assets/cards/card_001/lative.mp3
+assets/cards/card_001/illustration.png
+assets/cards/card_002/heart.png
+```
+
+**Invalid for released packaged decks:**
+```text
+/home/user/Pictures/cover.png
+/home/user/Audio/lative.mp3
+C:\Users\User\Pictures\cover.png
+../outside-folder/image.png
+```
+
+Applications should not save absolute local filesystem paths into released packaged `.mflash` decks.
+
+---
+
+### 10.7 Editing paths versus packaged paths
+
+Applications may temporarily use absolute local filesystem paths while editing.
+
+**Example temporary editing path:**
+```text
+/home/user/Pictures/cover.png
+```
+
+But when saving or exporting a packaged `.mflash`, the application should:
+1. Copy the file into the package under `assets/`.
+2. Rewrite the media `src` to a relative package path.
+3. Save the updated `deck.json`.
+
+**Example rewrite:**
+```text
+/home/user/Pictures/cover.png → assets/deck/cover.png
+/home/user/Audio/lative.mp3 → assets/cards/card_001/lative.mp3
+```
+
+---
+
+### 10.8 Save/export ingest behavior
+
+When saving or exporting a packaged `.mflash`, applications should ingest external asset files.
+
+**Recommended behavior:**
+- [ ] Detect absolute local asset paths.
+- [ ] Copy deck-level assets into `assets/deck/`.
+- [ ] Copy card-level assets into `assets/cards/<card_id>/`.
+- [ ] Rewrite all `src` paths to relative package paths.
+- [ ] Write `deck.json` at the archive root.
+- [ ] Preserve existing package files when practical.
+- [ ] Avoid duplicate filenames or safely rename duplicates.
+- [ ] Prevent path traversal outside the package.
+
+**Example:**
+
+*Before save:*
+```json
+{
+  "cover": {
+    "type": "image",
+    "role": "cover",
+    "src": "/home/user/Pictures/anatomy-cover.png"
+  },
+  "cards": [
+    {
+      "id": "card_001",
+      "kind": "basic",
+      "term": "Clavicle",
+      "definition": "The collarbone.",
+      "media": [
+        {
+          "type": "audio",
+          "role": "term_pronunciation",
+          "src": "/home/user/Audio/clavicle.mp3"
+        }
+      ]
+    }
+  ]
+}
+```
+
+*After save:*
+```json
+{
+  "cover": {
+    "type": "image",
+    "role": "cover",
+    "src": "assets/deck/anatomy-cover.png"
+  },
+  "cards": [
+    {
+      "id": "card_001",
+      "kind": "basic",
+      "term": "Clavicle",
+      "definition": "The collarbone.",
+      "media": [
+        {
+          "type": "audio",
+          "role": "term_pronunciation",
+          "src": "assets/cards/card_001/clavicle.mp3"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### 10.9 Duplicate filenames
+
+Applications should avoid asset collisions.
+
+For example, if two cards both import a file named `image.png`, they can safely coexist because card assets are stored in card-specific folders:
+```text
+assets/cards/card_001/image.png
+assets/cards/card_002/image.png
+```
+
+If multiple files with the same name are imported into the same card directory, applications should rename them safely.
+
+**Example:**
+```text
+assets/cards/card_001/image.png
+assets/cards/card_001/image_2.png
+assets/cards/card_001/image_3.png
+```
+
+Applications should update the corresponding `src` values after renaming.
+
+---
+
+### 10.10 Path safety
+
+Applications should prevent package paths from escaping the archive.
+
+**Invalid path patterns:**
+- `../`
+- `..\`
+- `/absolute/path`
+- `C:\absolute\path`
+
+**Invalid examples:**
+- `../secrets.txt`
+- `../../image.png`
+- `/home/user/image.png`
+- `C:\Users\User\image.png`
+
+Applications should reject, sanitize, or rewrite unsafe paths during save/export.
+
+---
+
+### 10.11 Shared assets
+
+The initial v3 convention is:
+- Deck assets go under `assets/deck/`
+- Card assets go under `assets/cards/<card_id>/`
+
+A future version may define a shared asset folder, such as:
+```text
+assets/shared/
+```
+
+For v3, card-local assets are preferred because they make ownership clear and simplify export, deletion, copying, and editing.
+
+Applications may preserve an existing `assets/shared/` folder if encountered, but v3 does not require shared asset support.
+
+---
+
+### 10.12 Package asset checklist
+
+- [x] `deck.json` is required at root.
+- [x] `assets/` is the standard asset folder.
+- [x] `assets/deck/` stores cover and deck-level assets.
+- [x] `assets/cards/<card_id>/` stores card-level assets.
+- [x] All packaged `src` paths should be relative.
+- [x] Packaged decks should not store absolute local paths.
+- [x] App may temporarily use absolute paths while editing.
+- [x] Save/export should ingest files and rewrite paths.
+
+**Recommended examples:**
+- [x] `assets/deck/cover.png`
+- [x] `assets/cards/card_001/lative.mp3`
+- [x] `assets/cards/card_001/illustration.png`
+- [x] `assets/cards/card_002/heart.png`
+
