@@ -2493,3 +2493,422 @@ C:\Users\User\Audio\lative.mp3
 - [x] Else if TTS enabled, speak term using card/deck language.
 - [x] If file audio enabled and `definition_pronunciation` exists, play file.
 - [x] Else if TTS enabled, speak definition using card/deck language.
+
+## 9. Image Occlusion Support
+
+mflash v3 supports image occlusion as a first-class card kind.
+
+Image occlusion cards hide one or more regions of an image and ask the learner to identify the hidden content. This is useful for anatomy, maps, diagrams, machinery, art history, biology, geography, charts, labels, and visual memorization.
+
+Image occlusion cards use:
+```text
+kind: "image_occlusion"
+```
+
+---
+
+### 9.1 Basic image occlusion card
+
+**Example:**
+```json
+{
+  "id": "card_heart_001",
+  "kind": "image_occlusion",
+  "prompt": "Identify the hidden structure.",
+  "occlusion": {
+    "image": {
+      "id": "heart_img",
+      "type": "image",
+      "role": "occlusion_image",
+      "src": "assets/cards/card_heart_001/heart.png",
+      "alt": "Diagram of the human heart"
+    },
+    "masks": [
+      {
+        "id": "mask_001",
+        "shape": "rect",
+        "x": 0.42,
+        "y": 0.31,
+        "w": 0.18,
+        "h": 0.08,
+        "answer": "Aorta",
+        "hint": "Main artery leaving the heart"
+      }
+    ]
+  }
+}
+```
+
+**Required fields for an image occlusion card:**
+- `id`
+- `kind`
+- `occlusion`
+
+**Recommended fields:**
+- `prompt`
+- `tags`
+- `notes`
+
+---
+
+### 9.2 Occlusion object
+
+The `occlusion` object contains the base image and the masks used to hide parts of that image.
+
+**Required occlusion fields:**
+- `image`
+- `masks`
+
+**Example:**
+```json
+"occlusion": {
+  "image": {
+    "id": "heart_img",
+    "type": "image",
+    "role": "occlusion_image",
+    "src": "assets/cards/card_heart_001/heart.png",
+    "alt": "Diagram of the human heart"
+  },
+  "masks": []
+}
+```
+
+---
+
+### 9.3 Occlusion image
+
+The `occlusion.image` field is a standard mflash media object.
+
+It should use:
+- `"type": "image"`
+- and usually: `"role": "occlusion_image"`
+
+**Example:**
+```json
+{
+  "id": "skeleton_img",
+  "type": "image",
+  "role": "occlusion_image",
+  "src": "assets/cards/card_skeleton_001/skeleton.png",
+  "alt": "Diagram of the human skeleton"
+}
+```
+
+The image file should be stored under the card's asset directory:
+```text
+assets/cards/<card_id>/
+```
+
+**Example:**
+```text
+assets/cards/card_skeleton_001/skeleton.png
+```
+
+---
+
+### 9.4 Masks array
+
+The `masks` field is an array of occlusion mask objects. Each mask represents one hidden region on the image.
+
+**Example:**
+```json
+"masks": [
+  {
+    "id": "mask_001",
+    "shape": "rect",
+    "x": 0.42,
+    "y": 0.31,
+    "w": 0.18,
+    "h": 0.08,
+    "answer": "Aorta",
+    "hint": "Main artery leaving the heart"
+  }
+]
+```
+
+**Each mask should have:**
+- `id`
+- `shape`
+- `answer`
+
+Shape-specific coordinate fields are also required depending on the mask shape.
+
+---
+
+### 9.5 Normalized coordinates
+
+Image occlusion coordinates should use normalized values from `0.0` to `1.0`.
+
+This means coordinates are relative to the image dimensions, not absolute pixels.
+
+**Example:**
+```json
+{
+  "x": 0.42,
+  "y": 0.31,
+  "w": 0.18,
+  "h": 0.08
+}
+```
+
+This allows masks to keep working when the image is resized.
+
+**For rectangular and elliptical masks:**
+| Coordinate | Description |
+|------------|-------------|
+| `x` | Horizontal position from the left edge of the image |
+| `y` | Vertical position from the top edge of the image |
+| `w` | Mask width relative to image width |
+| `h` | Mask height relative to image height |
+
+Applications should clamp or reject invalid coordinate values outside the `0.0` to `1.0` range.
+
+---
+
+### 9.6 Rectangular masks
+
+Rectangular masks use:
+```json
+"shape": "rect"
+```
+
+**Required fields:**
+- `id`
+- `shape`
+- `x`
+- `y`
+- `w`
+- `h`
+- `answer`
+
+**Example:**
+```json
+{
+  "id": "mask_001",
+  "shape": "rect",
+  "x": 0.42,
+  "y": 0.31,
+  "w": 0.18,
+  "h": 0.08,
+  "answer": "Aorta",
+  "hint": "Main artery leaving the heart"
+}
+```
+
+Applications should support rectangular masks first.
+
+---
+
+### 9.7 Ellipse masks
+
+Ellipse masks use:
+```json
+"shape": "ellipse"
+```
+
+**Required fields:**
+- `id`
+- `shape`
+- `x`
+- `y`
+- `w`
+- `h`
+- `answer`
+
+**Example:**
+```json
+{
+  "id": "mask_002",
+  "shape": "ellipse",
+  "x": 0.55,
+  "y": 0.44,
+  "w": 0.14,
+  "h": 0.10,
+  "answer": "Left atrium",
+  "hint": "Upper chamber on the viewer's right side of the diagram"
+}
+```
+
+For ellipse masks, `x`, `y`, `w`, and `h` describe the bounding box of the ellipse.
+
+---
+
+### 9.8 Polygon masks
+
+Polygon masks use:
+```json
+"shape": "polygon"
+```
+
+**Required fields:**
+- `id`
+- `shape`
+- `points`
+- `answer`
+
+The `points` field is an array of normalized coordinate pairs.
+
+**Example:**
+```json
+{
+  "id": "mask_003",
+  "shape": "polygon",
+  "points": [
+    { "x": 0.20, "y": 0.30 },
+    { "x": 0.32, "y": 0.34 },
+    { "x": 0.28, "y": 0.47 },
+    { "x": 0.18, "y": 0.42 }
+  ],
+  "answer": "Scapula",
+  "hint": "Shoulder blade"
+}
+```
+
+Polygon points should also use normalized coordinates from `0.0` to `1.0`.
+
+---
+
+### 9.9 Mask answer, hint, and explanation
+
+Each mask should include an `answer`.
+
+**Example:**
+```json
+"answer": "Aorta"
+```
+
+A mask may include a `hint`.
+
+**Example:**
+```json
+"hint": "Main artery leaving the heart"
+```
+
+A mask may include an `explanation`.
+
+**Example:**
+```json
+"explanation": "The aorta carries oxygenated blood from the left ventricle to the body."
+```
+
+**Recommended mask fields:**
+- `id`
+- `shape`
+- `answer`
+- `hint` (optional)
+- `explanation` (optional)
+
+---
+
+### 9.10 Multiple masks
+
+A single image occlusion card may contain multiple masks.
+
+**Example:**
+```json
+{
+  "id": "card_heart_001",
+  "kind": "image_occlusion",
+  "prompt": "Identify the hidden structures.",
+  "occlusion": {
+    "image": {
+      "id": "heart_img",
+      "type": "image",
+      "role": "occlusion_image",
+      "src": "assets/cards/card_heart_001/heart.png",
+      "alt": "Diagram of the human heart"
+    },
+    "masks": [
+      {
+        "id": "mask_001",
+        "shape": "rect",
+        "x": 0.42,
+        "y": 0.31,
+        "w": 0.18,
+        "h": 0.08,
+        "answer": "Aorta"
+      },
+      {
+        "id": "mask_002",
+        "shape": "ellipse",
+        "x": 0.58,
+        "y": 0.44,
+        "w": 0.14,
+        "h": 0.10,
+        "answer": "Left atrium"
+      }
+    ]
+  }
+}
+```
+
+Applications may choose to study all masks at once or generate separate review prompts for each mask.
+
+---
+
+### 9.11 One-card versus generated-card behavior
+
+An image occlusion card may be treated in two ways:
+
+| Mode | Description |
+|------|-------------|
+| **single-card mode** | The card is reviewed as one card with multiple hidden regions. |
+| **generated-card mode** | An application may generate separate review items from each mask. |
+
+For example, one image occlusion card with three masks may become three study prompts during review.
+
+Applications should preserve the source card and mask IDs so progress systems can track review history consistently.
+
+**Recommended generated review identifier pattern:**
+```text
+<card_id>#<mask_id>
+```
+
+**Example:**
+```text
+card_heart_001#mask_001
+```
+
+---
+
+### 9.12 Image occlusion asset location
+
+Image occlusion base images should live under the card's asset directory.
+
+**Recommended layout:**
+```text
+deck.json
+assets/
+  cards/
+    card_heart_001/
+      heart.png
+```
+
+The corresponding JSON should use:
+```json
+"src": "assets/cards/card_heart_001/heart.png"
+```
+
+---
+
+### 9.13 Image occlusion checklist
+
+- [x] Add `image_occlusion` card kind.
+- [x] Add `occlusion` object.
+- [x] Add `occlusion.image` media object.
+- [x] Add `masks` array.
+- [x] Use normalized coordinates from `0.0` to `1.0`.
+- [x] Support `rect` masks first.
+- [x] Define `ellipse` masks.
+- [x] Define `polygon` masks.
+- [x] Each mask has `id`.
+- [x] Each mask has `shape`.
+- [x] Each mask has `answer`.
+- [x] Optional `hint` per mask.
+- [x] Optional `explanation` per mask.
+
+**Mask shape checklist:**
+- [x] `rect`: `x`, `y`, `w`, `h`
+- [x] `ellipse`: `x`, `y`, `w`, `h`
+- [x] `polygon`: `points` array
+
