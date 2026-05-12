@@ -68,6 +68,13 @@ Any `.mflash` example in the `examples/` folder should:
 - Be valid UTF-8 JSON  
 - Pass schema validation using the included `schema/mflash-schema.json`
 
+## Why validate .mflash examples?
+- Consistency: All files in the examples/ folder behave the same way. Tools that read .mflash can rely on the structure.
+
+- Error prevention: Catches missing fields, wrong data types, or invalid values before they cause bugs.
+
+- Future compatibility: When the format evolves (v2, v3…), validation helps distinguish which files follow which spec version.
+
 (Optional but recommended):
 
 ```bash
