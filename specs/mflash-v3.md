@@ -964,3 +964,311 @@ Applications may accept common language names or aliases in their user interface
 * [x] Store deck cover files under `assets/deck/`.
 * [x] Document that `cover` is for deck identity/library display.
 * [x] Document that card media is for study content.
+
+## 5. Redesign Cards Around `kind`
+
+mflash v3 redesigns cards around a required `kind` field.
+
+In mflash v2, every card was assumed to be a term-definition flashcard. In mflash v3, a card is a typed study item. Basic term-definition cards remain supported, but they are now represented as `kind: "basic"`.
+
+---
+
+### 5.1 Required card fields
+
+Every mflash v3 card must include:
+
+- `id`
+- `kind`
+
+**Example:**
+
+```json
+{
+  "id": "card_001",
+  "kind": "basic"
+}
+```
+
+#### `id`
+The `id` field is a stable identifier for the card.
+- It may be used for progress tracking, syncing, media references, scheduling, review history, and app metadata.
+- Card IDs should be unique within a deck.
+
+**Example:** `"id": "card_001"`
+
+#### `kind`
+The `kind` field tells applications how to interpret, edit, and study the card.
+
+**Example:** `"kind": "basic"`
+
+Initial official card kinds include:
+- `basic`
+- `image_occlusion`
+- `listening`
+- `media_prompt`
+
+Applications may support additional card kinds. If an application encounters an unknown card kind, it should preserve the card data when possible and show a useful fallback instead of deleting or corrupting the card.
+
+---
+
+### 5.2 `term` and `definition` are optional globally
+
+In mflash v3, `term` and `definition` are no longer required on every card.
+
+They are still normal fields for basic term-definition cards, but other card kinds may use different fields such as:
+- `prompt`
+- `answer`
+- `media`
+- `occlusion`
+
+**Old v2 requirement:**
+```json
+"required": ["id", "term", "definition"]
+```
+
+**New v3 base card requirement:**
+```json
+"required": ["id", "kind"]
+```
+
+---
+
+### 5.3 Basic cards
+
+A basic card represents a traditional term-definition flashcard.
+
+For `kind: "basic"`, applications should require:
+- `id`
+- `kind`
+- `term`
+- `definition`
+
+**Example:**
+
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "Lative",
+  "definition": "Indicating motion up to or as far as.",
+  "media": []
+}
+```
+
+Basic cards may also include:
+- `term_lang`
+- `def_lang`
+- `phonetic`
+- `part_of_speech`
+- `notes`
+- `tags`
+- `examples`
+- `media`
+
+**Example with language metadata:**
+
+```json
+{
+  "id": "card_002",
+  "kind": "basic",
+  "term": "Weltanschauung",
+  "definition": "worldview",
+  "term_lang": "de-DE",
+  "def_lang": "en-US",
+  "media": [
+    {
+      "id": "audio_001",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_002/weltanschauung.mp3",
+      "lang": "de-DE"
+    }
+  ]
+}
+```
+
+---
+
+### 5.4 Non-basic cards
+
+Non-basic cards do not need to use `term` and `definition`.
+
+**Example: Image Occlusion Card**  
+May use `prompt` and `occlusion`:
+
+```json
+{
+  "id": "card_heart_001",
+  "kind": "image_occlusion",
+  "prompt": "Identify the hidden structure.",
+  "occlusion": {
+    "image": {
+      "id": "heart_img",
+      "type": "image",
+      "role": "occlusion_image",
+      "src": "assets/cards/card_heart_001/heart.png",
+      "alt": "Diagram of the human heart"
+    },
+    "masks": []
+  }
+}
+```
+
+**Example: Listening Card**  
+May use `prompt`, `media`, and `answer`:
+
+```json
+{
+  "id": "card_listening_001",
+  "kind": "listening",
+  "prompt": "What word do you hear?",
+  "answer": "bonjour",
+  "media": [
+    {
+      "id": "audio_question_001",
+      "type": "audio",
+      "role": "question_audio",
+      "src": "assets/cards/card_listening_001/bonjour.mp3",
+      "lang": "fr-FR"
+    }
+  ]
+}
+```
+
+**Example: Media Prompt Card**  
+May use visual or video media:
+
+```json
+{
+  "id": "card_media_001",
+  "kind": "media_prompt",
+  "prompt": "What process is shown here?",
+  "answer": "Mitosis",
+  "media": [
+    {
+      "id": "video_001",
+      "type": "video",
+      "role": "prompt_video",
+      "src": "assets/cards/card_media_001/mitosis.mp4"
+    }
+  ]
+}
+```
+
+---
+
+### 5.5 Shared card fields
+
+The following fields may be used across card kinds when relevant:
+- `prompt`
+- `answer`
+- `term`
+- `definition`
+- `term_lang`
+- `def_lang`
+- `phonetic`
+- `part_of_speech`
+- `notes`
+- `tags`
+- `examples`
+- `media`
+- `occlusion`
+
+#### `prompt`
+A prompt shown to the learner.  
+**Example:** `"prompt": "Identify the hidden structure."`
+
+#### `answer`
+An answer or expected response.  
+**Example:** `"answer": "Aorta"`
+
+#### `notes`
+Additional notes for the card.  
+**Example:** `"notes": "Often confused with the pulmonary artery."`
+
+#### `tags`
+Tags for organizing or filtering cards.  
+**Example:** `"tags": ["anatomy", "heart"]`
+
+#### `examples`
+Example text, translations, or usage examples.  
+**Example:**
+```json
+"examples": [
+  {
+    "text": "Je voudrais du café.",
+    "translation": "I would like some coffee.",
+    "lang": "fr-FR",
+    "translation_lang": "en-US"
+  }
+]
+```
+
+#### `media`
+A list of structured media objects attached to the card.  
+**Example:**
+```json
+"media": [
+  {
+    "id": "img_001",
+    "type": "image",
+    "role": "illustration",
+    "src": "assets/cards/card_001/image.png",
+    "alt": "An illustration for the card"
+  }
+]
+```
+
+---
+
+### 5.6 Kind-specific requirements
+
+Each card kind defines its own required fields.
+
+**Recommended initial requirements:**
+- **`basic`:** `id`, `kind`, `term`, `definition`
+- **`image_occlusion`:** `id`, `kind`, `occlusion`
+- **`listening`:** `id`, `kind`, `media`, `answer`
+- **`media_prompt`:** `id`, `kind`, `media`, `answer`
+
+Applications should validate card-kind-specific requirements when possible.
+
+Applications may allow incomplete cards while editing, but exported or released decks should satisfy the requirements for each card kind.
+
+---
+
+### 5.7 Migration from v2 cards
+
+When migrating v2 cards to v3, applications should treat old term-definition cards as `kind: "basic"`.
+
+**v2 card:**
+```json
+{
+  "id": "card_001",
+  "term": "Lative",
+  "definition": "Indicating motion up to or as far as."
+}
+```
+
+**v3 migrated card:**
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "Lative",
+  "definition": "Indicating motion up to or as far as."
+}
+```
+
+If a v2 card has `media`, `tags`, `notes`, `examples`, or language fields, those fields should be preserved during migration.
+
+---
+
+### 5.8 Card kind checklist
+
+- [x] Add `kind` to every v3 card.
+- [x] Make `term` optional globally.
+- [x] Make `definition` optional globally.
+- [x] For `kind: "basic"`, require `term` and `definition`.
+- [x] For other kinds, require fields appropriate to that kind.
+- [x] Keep `notes`, `tags`, `examples`, `media` available across card kinds.
