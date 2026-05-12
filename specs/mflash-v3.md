@@ -434,7 +434,264 @@ Required changelog notes:
 
 ---
 
-## 3. Summary of v3 Design Rules
+## 3. Deck-Level Fields
+
+### 3.1 Required deck fields
+
+Every mflash v3 deck must include the following fields:
+
+```json
+{
+  "format": "mflash",
+  "version": 3,
+  "id": "deck_001",
+  "title": "Example Deck",
+  "cards": []
+}
+
+```
+
+Required fields:
+
+* `format`
+* `version`
+* `id`
+* `title`
+* `cards`
+
+**format**
+The `format` field identifies the file as an mflash deck.
+For mflash v3, it must be:
+
+```json
+"format": "mflash"
+
+```
+
+**version**
+The `version` field identifies the mflash schema version.
+For mflash v3, it must be:
+
+```json
+"version": 3
+
+```
+
+**id**
+The `id` field is a stable deck identifier used for syncing, progress tracking, references, and app metadata.
+The deck `id` should not contain personally identifying information.
+Example:
+
+```json
+"id": "deck_21adb462"
+
+```
+
+**title**
+The `title` field is the human-readable deck title.
+Example:
+
+```json
+"title": "Human Anatomy"
+
+```
+
+**cards**
+The `cards` field contains the deck's study cards.
+It must be an array.
+Example:
+
+```json
+"cards": []
+
+```
+
+### 3.2 Optional deck fields
+
+mflash v3 decks may include the following optional fields:
+
+* `description`
+* `snippet`
+* `created_at`
+* `updated_at`
+* `default_term_lang`
+* `default_def_lang`
+* `deck_tags`
+* `cover`
+
+**description**
+A longer description of the deck.
+Example:
+
+```json
+"description": "A deck for studying major bones, muscles, and organs."
+
+```
+
+**snippet**
+A short summary of the deck, suitable for library views, search results, or previews.
+Example:
+
+```json
+"snippet": "Study bones, muscles, organs, and anatomy diagrams."
+
+```
+
+**created_at**
+An optional ISO 8601 timestamp for when the deck was created.
+Example:
+
+```json
+"created_at": "2026-05-12T03:20:00Z"
+
+```
+
+Applications must not require this field.
+
+**updated_at**
+An optional ISO 8601 timestamp for when the deck content was last meaningfully updated.
+Example:
+
+```json
+"updated_at": "2026-05-12T03:45:00Z"
+
+```
+
+Applications must not require this field.
+
+**default_term_lang**
+The default BCP 47 language tag for card terms when a card does not specify `term_lang`.
+Example:
+
+```json
+"default_term_lang": "fr-FR"
+
+```
+
+**default_def_lang**
+The default BCP 47 language tag for card definitions when a card does not specify `def_lang`.
+Example:
+
+```json
+"default_def_lang": "en-US"
+
+```
+
+**deck_tags**
+A list of tags describing the deck.
+Example:
+
+```json
+"deck_tags": ["anatomy", "medicine", "biology"]
+
+```
+
+**cover**
+A structured media object used as the deck's cover image.
+Example:
+
+```json
+"cover": {
+  "id": "cover_001",
+  "type": "image",
+  "role": "cover",
+  "src": "assets/deck/cover.png",
+  "alt": "Deck cover image"
+}
+
+```
+
+### 3.3 Deck cover
+
+mflash v3 replaces or supersedes the v2 `cover_media` string with a structured `cover` object.
+
+v2 style:
+
+```json
+"cover_media": "media/cover.png"
+
+```
+
+v3 style:
+
+```json
+"cover": {
+  "id": "cover_001",
+  "type": "image",
+  "role": "cover",
+  "src": "assets/deck/cover.png",
+  "alt": "Deck cover image"
+}
+
+```
+
+The `cover` field uses the same media object shape used by card media.
+
+Required cover media fields:
+
+* `type`
+* `src`
+
+Recommended cover media fields:
+
+* `id`
+* `type`
+* `role`
+* `src`
+* `alt`
+* `description`
+
+For deck covers, `type` should usually be:
+
+```json
+"type": "image"
+
+```
+
+For deck covers, `role` should usually be:
+
+```json
+"role": "cover"
+
+```
+
+### 3.4 Deck asset location
+
+Deck-level assets should be stored under:
+
+```text
+assets/deck/
+
+```
+
+Recommended cover path:
+
+```text
+assets/deck/cover.png
+
+```
+
+Example package layout:
+
+```text
+deck.json
+assets/
+  deck/
+    cover.png
+  cards/
+    card_001/
+      pronunciation.mp3
+      illustration.png
+
+```
+
+The deck cover is for deck identity, library display, thumbnails, storefront-style views, and file previews.
+Card media is for study content.
+Deck cover images should not be mixed into individual card asset folders.
+
+---
+
+## 4. Summary of v3 Design Rules
 
 * [x] mflash v3 decks are still JSON-first.
 * [x] Packaged .mflash files are ZIP archives.
@@ -447,3 +704,8 @@ Required changelog notes:
 * [x] Media objects are structured and reusable.
 * [x] Polyglot deck/card/media language support remains.
 * [x] Unknown extra fields may be preserved for forward compatibility.
+* [x] Rename or supersede `cover_media` with `cover`.
+* [x] Make `cover` use the same media object shape as card media.
+* [x] Store deck cover files under `assets/deck/`.
+* [x] Document that `cover` is for deck identity/library display.
+* [x] Document that card media is for study content.
