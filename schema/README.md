@@ -133,3 +133,21 @@ Create a basic deck example:
     }
   }
 }
+Validation
+
+Validate a raw v3 deck JSON file:
+
+```bash
+python scripts/validate.py examples/v3-basic-deck/deck.json schema/mflash-v3-schema.json
+
+Validate a raw v3 deck and check referenced assets exist:
+
+python scripts/validate.py examples/v3-basic-deck/deck.json schema/mflash-v3-schema.json --check-assets
+
+Validate a packaged .mflash file:
+
+python scripts/validate_package.py path/to/deck.mflash
+
+Validate all v3 examples:
+
+python scripts/validate_examples.py
