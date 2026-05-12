@@ -1,0 +1,55 @@
+{
+  "format": "mflash",
+  "version": 2,
+  "id": "deck_maximal_v2",
+  "title": "Maximal mflash v2 Deck",
+  "description": "A demonstration deck using most common optional mflash v2 fields.",
+  "snippet": "A full-featured mflash v2 example.",
+  "default_term_lang": "fr",
+  "default_def_lang": "en",
+  "deck_tags": [
+    "example",
+    "maximal",
+    "french"
+  ],
+  "cover_media": "media/cover.png",
+  "created_at": "2026-05-11T20:30:00Z",
+  "updated_at": "2026-05-11T20:30:00Z",
+  "cards": [
+    {
+      "id": "card_bonjour",
+      "term": "bonjour",
+      "definition": "hello; good morning",
+      "term_lang": "fr",
+      "def_lang": "en",
+      "phonetic": "/bɔ̃.ʒuʁ/",
+      "part_of_speech": "interjection",
+      "notes": "Used as a greeting during the day.",
+      "hyperlink": "https://en.wiktionary.org/wiki/bonjour",
+      "examples": [
+        {
+          "text": "Bonjour, comment ça va ?",
+          "translation": "Hello, how are you?",
+          "lang": "fr",
+          "translation_lang": "en"
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "src": "media/bonjour.png",
+          "alt": "A greeting illustration."
+        },
+        {
+          "type": "audio",
+          "src": "media/bonjour.mp3",
+          "description": "Pronunciation audio for bonjour."
+        }
+      ],
+      "tags": [
+        "greeting",
+        "beginner"
+      ]
+    }
+  ]
+}

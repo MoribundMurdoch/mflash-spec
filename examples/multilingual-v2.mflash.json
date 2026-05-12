@@ -1,0 +1,78 @@
+{
+  "format": "mflash",
+  "version": 2,
+  "id": "deck_multilingual_v2",
+  "title": "Multilingual mflash v2 Demo",
+  "description": "A small Unicode-heavy deck demonstrating multiple scripts and language tags.",
+  "snippet": "Unicode, multilingual text, and language metadata.",
+  "deck_tags": [
+    "multilingual",
+    "unicode",
+    "demo"
+  ],
+  "cards": [
+    {
+      "id": "card_french_001",
+      "term": "merci",
+      "definition": "thank you",
+      "term_lang": "fr",
+      "def_lang": "en",
+      "examples": [
+        {
+          "text": "Merci beaucoup.",
+          "translation": "Thank you very much.",
+          "lang": "fr",
+          "translation_lang": "en"
+        }
+      ],
+      "tags": [
+        "french",
+        "politeness"
+      ]
+    },
+    {
+      "id": "card_japanese_001",
+      "term": "ありがとう",
+      "definition": "thank you",
+      "term_lang": "ja",
+      "def_lang": "en",
+      "phonetic": "arigatō",
+      "examples": [
+        {
+          "text": "ありがとう！",
+          "translation": "Thank you!",
+          "lang": "ja",
+          "translation_lang": "en"
+        }
+      ],
+      "tags": [
+        "japanese",
+        "kana"
+      ]
+    },
+    {
+      "id": "card_georgian_001",
+      "term": "გამარჯობა",
+      "definition": "hello",
+      "term_lang": "ka",
+      "def_lang": "en",
+      "phonetic": "gamarjoba",
+      "tags": [
+        "georgian",
+        "greeting"
+      ]
+    },
+    {
+      "id": "card_emoji_001",
+      "term": "☕",
+      "definition": "coffee; hot drink symbol",
+      "term_lang": "und",
+      "def_lang": "en",
+      "notes": "Emoji and symbols are valid Unicode content.",
+      "tags": [
+        "emoji",
+        "symbol"
+      ]
+    }
+  ]
+}

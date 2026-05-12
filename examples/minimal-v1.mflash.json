@@ -1,0 +1,11 @@
+{
+  "format": "mflash",
+  "version": 1,
+  "title": "Minimal mflash v1 Deck",
+  "cards": [
+    {
+      "term": "bonjour",
+      "definition": "hello"
+    }
+  ]
+}

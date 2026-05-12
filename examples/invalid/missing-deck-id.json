@@ -1,0 +1,12 @@
+{
+  "format": "mflash",
+  "version": 2,
+  "title": "Invalid: Missing Deck ID",
+  "cards": [
+    {
+      "id": "card_001",
+      "term": "bonjour",
+      "definition": "hello"
+    }
+  ]
+}
