@@ -1,0 +1,15 @@
+{
+  "format": "mflash-progress",
+  "version": 1,
+  "deck_id": "deck_minimal_v2",
+  "cards": {
+    "card_001": {
+      "review_count": 3,
+      "correct_count": 2,
+      "incorrect_count": 1,
+      "last_reviewed_at": "2026-05-11T20:44:00Z",
+      "due_at": "2026-05-12T20:44:00Z",
+      "ease": 2.5
+    }
+  }
+}

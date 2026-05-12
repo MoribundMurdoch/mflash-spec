@@ -1,0 +1,19 @@
+{
+  "format": "mflash",
+  "version": 2,
+  "id": "deck_anonymous_french_basics",
+  "title": "French Basics",
+  "description": "A small shareable deck with no timestamps.",
+  "cards": [
+    {
+      "id": "card_001",
+      "term": "bonjour",
+      "definition": "hello"
+    },
+    {
+      "id": "card_002",
+      "term": "merci",
+      "definition": "thank you"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mflash progress v1",
+  "description": "Schema for user/app-specific study progress associated with an mflash deck.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "format",
+    "version",
+    "deck_id",
+    "cards"
+  ],
+  "properties": {
+    "format": {
+      "const": "mflash-progress"
+    },
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "deck_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "cards": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/card_progress"
+      },
+      "default": {}
+    }
+  },
+  "$defs": {
+    "card_progress": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "review_count": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "correct_count": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "incorrect_count": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "last_reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "due_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ease": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
