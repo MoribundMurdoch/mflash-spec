@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "mflash v1",
-  "description": "Schema for mflash deck JSON, used by raw .mflash.json files and deck.json inside packaged .mflash archives.",
+  "title": "mflash v2",
+  "description": "Schema for mflash v2 deck JSON, used by raw .mflash.json files and deck.json inside packaged .mflash archives.",
   "type": "object",
   "additionalProperties": true,
   "required": [
     "format",
     "version",
+    "id",
     "title",
     "cards"
   ],
@@ -16,7 +17,12 @@
     },
     "version": {
       "type": "integer",
-      "const": 1
+      "const": 2
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable deck identifier used for progress files, syncing, references, and app metadata. Should not contain personally identifying information."
     },
     "title": {
       "type": "string",
@@ -28,11 +34,23 @@
     "snippet": {
       "type": "string"
     },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional ISO 8601 timestamp for when the deck was created. Applications must not require this field."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional ISO 8601 timestamp for when the deck content was last meaningfully updated. Applications must not require this field."
+    },
     "default_term_lang": {
-      "type": "string"
+      "type": "string",
+      "description": "Default BCP 47 language tag for card terms when a card does not specify term_lang."
     },
     "default_def_lang": {
-      "type": "string"
+      "type": "string",
+      "description": "Default BCP 47 language tag for card definitions when a card does not specify def_lang."
     },
     "deck_tags": {
       "type": "array",
@@ -57,12 +75,15 @@
       "type": "object",
       "additionalProperties": true,
       "required": [
+        "id",
         "term",
         "definition"
       ],
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable card identifier used for progress tracking, syncing, media references, and app metadata. Should not contain personally identifying information."
         },
         "term": {
           "type": "string"
@@ -71,10 +92,12 @@
           "type": "string"
         },
         "term_lang": {
-          "type": "string"
+          "type": "string",
+          "description": "BCP 47 language tag for the term."
         },
         "def_lang": {
-          "type": "string"
+          "type": "string",
+          "description": "BCP 47 language tag for the definition."
         },
         "phonetic": {
           "type": "string"
@@ -86,7 +109,8 @@
           "type": "string"
         },
         "hyperlink": {
-          "type": "string"
+          "type": "string",
+          "format": "uri"
         },
         "media": {
           "oneOf": [
@@ -167,10 +191,12 @@
           "type": "string"
         },
         "lang": {
-          "type": "string"
+          "type": "string",
+          "description": "BCP 47 language tag for the example text."
         },
         "translation_lang": {
-          "type": "string"
+          "type": "string",
+          "description": "BCP 47 language tag for the example translation."
         }
       }
     }
