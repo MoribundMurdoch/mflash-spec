@@ -1,0 +1,56 @@
+{
+  "format": "mflash",
+  "version": 3,
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "mflash v3 Basic Example",
+  "default_term_lang": "en-US",
+  "default_def_lang": "en-US",
+  "cover": {
+    "id": "550e8400-e29b-41d4-a716-446655440010",
+    "type": "image",
+    "role": "cover",
+    "src": "assets/deck/cover.png",
+    "alt": "Example deck cover"
+  },
+  "cards": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "kind": "basic",
+      "term": "Lative",
+      "definition": "Indicating motion up to or as far as.",
+      "lexical": {
+        "etymology": "From Latin latus, carried or borne.",
+        "morphology": [
+          {
+            "form": "lat-",
+            "type": "root",
+            "meaning": "carried or borne",
+            "origin": "Latin"
+          },
+          {
+            "form": "-ive",
+            "type": "suffix",
+            "meaning": "having the nature of"
+          }
+        ],
+        "ipa": "/ˈleɪtɪv/",
+        "register": "technical",
+        "language": "en-US"
+      },
+      "media": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440011",
+          "type": "audio",
+          "role": "term_pronunciation",
+          "src": "assets/cards/550e8400-e29b-41d4-a716-446655440001/lative.mp3",
+          "lang": "en-US"
+        }
+      ]
+    }
+  ],
+  "extensions": {
+    "mflash-spec": {
+      "example": true
+    }
+  }
+}

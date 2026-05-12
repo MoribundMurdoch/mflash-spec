@@ -1,0 +1,44 @@
+{
+  "format": "mflash",
+  "version": 3,
+  "id": "550e8400-e29b-41d4-a716-446655441000",
+  "title": "mflash v3 Image Occlusion Example",
+  "cards": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655441001",
+      "kind": "image_occlusion",
+      "prompt": "Identify the hidden structure.",
+      "occlusion": {
+        "image": {
+          "id": "550e8400-e29b-41d4-a716-446655441010",
+          "type": "image",
+          "role": "occlusion_image",
+          "src": "assets/cards/550e8400-e29b-41d4-a716-446655441001/heart.png",
+          "alt": "Diagram of the human heart"
+        },
+        "masks": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441020",
+            "shape": "rect",
+            "x": 0.42,
+            "y": 0.31,
+            "w": 0.18,
+            "h": 0.08,
+            "answer": "Aorta",
+            "hint": "Main artery leaving the heart",
+            "explanation": "The aorta carries oxygenated blood from the left ventricle to the body."
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655441021",
+            "shape": "ellipse",
+            "x": 0.58,
+            "y": 0.44,
+            "w": 0.14,
+            "h": 0.10,
+            "answer": "Left atrium"
+          }
+        ]
+      }
+    }
+  ]
+}
