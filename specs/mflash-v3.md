@@ -1272,3 +1272,322 @@ If a v2 card has `media`, `tags`, `notes`, `examples`, or language fields, those
 - [x] For `kind: "basic"`, require `term` and `definition`.
 - [x] For other kinds, require fields appropriate to that kind.
 - [x] Keep `notes`, `tags`, `examples`, `media` available across card kinds.
+
+## 6. Official Card Kinds
+
+mflash v3 defines a small initial set of official card kinds.
+
+The initial official card kinds are:
+- `basic`
+- `image_occlusion`
+- `listening`
+- `media_prompt`
+
+Applications may support additional card kinds, but these four kinds form the first stable v3 baseline.
+
+---
+
+### 6.1 `basic`
+
+A basic card is a traditional term-definition flashcard.
+
+Use `basic` for vocabulary, concepts, definitions, names, facts, and ordinary two-sided flashcards.
+
+**Required fields:**
+- `id`
+- `kind`
+- `term`
+- `definition`
+
+**Example:**
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "Lative",
+  "definition": "Indicating motion up to or as far as.",
+  "media": []
+}
+```
+
+A basic card may also include:
+- `term_lang`
+- `def_lang`
+- `phonetic`
+- `part_of_speech`
+- `notes`
+- `tags`
+- `examples`
+- `media`
+
+**Example with pronunciation audio:**
+```json
+{
+  "id": "card_002",
+  "kind": "basic",
+  "term": "Weltanschauung",
+  "definition": "worldview",
+  "term_lang": "de-DE",
+  "def_lang": "en-US",
+  "media": [
+    {
+      "id": "audio_term_001",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_002/weltanschauung.mp3",
+      "lang": "de-DE"
+    }
+  ]
+}
+```
+
+---
+
+### 6.2 `image_occlusion`
+
+An `image_occlusion` card hides one or more regions of an image and asks the learner to identify the hidden content.
+
+Use `image_occlusion` for anatomy, maps, diagrams, machinery, art history, biological structures, charts, labels, and visual memorization.
+
+**Required fields:**
+- `id`
+- `kind`
+- `occlusion`
+
+**Recommended fields:**
+- `prompt`
+- `tags`
+- `notes`
+
+**Example:**
+```json
+{
+  "id": "card_heart_001",
+  "kind": "image_occlusion",
+  "prompt": "Identify the hidden structure.",
+  "occlusion": {
+    "image": {
+      "id": "heart_img",
+      "type": "image",
+      "role": "occlusion_image",
+      "src": "assets/cards/card_heart_001/heart.png",
+      "alt": "Diagram of the human heart"
+    },
+    "masks": [
+      {
+        "id": "mask_001",
+        "shape": "rect",
+        "x": 0.42,
+        "y": 0.31,
+        "w": 0.18,
+        "h": 0.08,
+        "answer": "Aorta",
+        "hint": "Main artery leaving the heart"
+      }
+    ]
+  },
+  "tags": ["anatomy", "heart"]
+}
+```
+
+Image occlusion coordinates should be normalized from `0.0` to `1.0` relative to the image dimensions.
+
+**Example:**
+```json
+{
+  "x": 0.42,
+  "y": 0.31,
+  "w": 0.18,
+  "h": 0.08
+}
+```
+
+This allows occlusion masks to work even when the image is displayed at different sizes.
+
+---
+
+### 6.3 `listening`
+
+A `listening` card is an audio-first prompt/answer card.
+
+Use `listening` for language listening practice, dictation, pronunciation recognition, music identification, sound identification, or any study card where the primary prompt is audio.
+
+**Required fields:**
+- `id`
+- `kind`
+- `media`
+- `answer`
+
+**Recommended fields:**
+- `prompt`
+- `notes`
+- `tags`
+
+**Example:**
+```json
+{
+  "id": "card_listening_001",
+  "kind": "listening",
+  "prompt": "What word do you hear?",
+  "answer": "bonjour",
+  "media": [
+    {
+      "id": "audio_question_001",
+      "type": "audio",
+      "role": "question_audio",
+      "src": "assets/cards/card_listening_001/bonjour.mp3",
+      "lang": "fr-FR"
+    }
+  ],
+  "tags": ["french", "listening"]
+}
+```
+
+A listening card may also include answer audio:
+```json
+{
+  "id": "audio_answer_001",
+  "type": "audio",
+  "role": "answer_audio",
+  "src": "assets/cards/card_listening_001/bonjour-answer.mp3",
+  "lang": "fr-FR"
+}
+```
+
+---
+
+### 6.4 `media_prompt`
+
+A `media_prompt` card uses image, gif, video, or other media as the main prompt.
+
+Use `media_prompt` for identifying images, interpreting diagrams, recognizing scenes, studying historical images, analyzing video clips, or answering questions based on visual media.
+
+**Required fields:**
+- `id`
+- `kind`
+- `media`
+- `answer`
+
+**Recommended fields:**
+- `prompt`
+- `notes`
+- `tags`
+
+**Example:**
+```json
+{
+  "id": "card_media_001",
+  "kind": "media_prompt",
+  "prompt": "What process is shown here?",
+  "answer": "Mitosis",
+  "media": [
+    {
+      "id": "video_001",
+      "type": "video",
+      "role": "prompt_video",
+      "src": "assets/cards/card_media_001/mitosis.mp4",
+      "description": "A short clip showing cell division."
+    }
+  ],
+  "tags": ["biology", "cell division"]
+}
+```
+
+A media prompt may use an image:
+```json
+{
+  "id": "image_prompt_001",
+  "type": "image",
+  "role": "prompt_image",
+  "src": "assets/cards/card_media_001/painting.png",
+  "alt": "A historical painting"
+}
+```
+
+or a gif:
+```json
+{
+  "id": "gif_prompt_001",
+  "type": "gif",
+  "role": "prompt_animation",
+  "src": "assets/cards/card_media_001/process.gif",
+  "alt": "Animated process diagram"
+}
+```
+
+---
+
+### 6.5 Unknown or extension card kinds
+
+Applications may encounter card kinds outside the official v3 set.
+
+**Example:**
+```json
+{
+  "id": "card_custom_001",
+  "kind": "multiple_choice",
+  "prompt": "Which answer is correct?",
+  "choices": ["A", "B", "C", "D"],
+  "answer": "B"
+}
+```
+
+If an application does not support a card kind, it should:
+- Preserve the card data
+- Avoid deleting unknown fields
+- Show a useful fallback message
+- Avoid silently converting the card to another kind
+
+**Recommended fallback message:**
+> This card kind is not supported by this application.
+
+Applications may still show raw JSON or limited metadata for unsupported cards.
+
+---
+
+### 6.6 Later candidate card kinds
+
+The following card kinds are candidates for future versions or extensions:
+
+- **`cloze`**  
+  A fill-in-the-blank card.  
+  *Potential use:* Language learning, quotes, formulas, definitions, memorized passages.
+
+- **`multiple_choice`**  
+  A prompt with predefined answer options.  
+  *Potential use:* Quizzes, exam prep, recognition practice.
+
+- **`typing`**  
+  A card that requires the learner to type the answer.  
+  *Potential use:* Spelling, language production, formulas, exact recall.
+
+- **`ordering`**  
+  A card where the learner orders items correctly.  
+  *Potential use:* Processes, timelines, taxonomies, steps.
+
+- **`matching`**  
+  A card where the learner matches related items.  
+  *Potential use:* Vocabulary pairs, names and dates, images and labels.
+
+- **`reverse`**  
+  A card designed to generate or represent reverse-direction practice.  
+  *Potential use:* Definition-to-term review, translation reversal, bidirectional vocabulary.
+
+These candidates are not part of the required v3 baseline unless formally added to the official card kind list.
+
+---
+
+### 6.7 Official card kind checklist
+
+- [x] `basic`
+- [x] `image_occlusion`
+- [x] `listening`
+- [x] `media_prompt`
+
+**Later candidates:**
+- [ ] `cloze`
+- [ ] `multiple_choice`
+- [ ] `typing`
+- [ ] `ordering`
+- [ ] `matching`
+- [ ] `reverse`
