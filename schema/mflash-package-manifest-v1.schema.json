@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mflash package manifest v1",
+  "description": "Optional manifest schema for packaged .mflash archives. The manifest describes package-level metadata, not deck content.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "format",
+    "version"
+  ],
+  "properties": {
+    "format": {
+      "const": "mflash-package-manifest"
+    },
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "deck_file": {
+      "type": "string",
+      "default": "deck.json",
+      "description": "Path to the deck JSON file inside the package. For standard packages, this should be deck.json at the package root."
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Optional application or tool that created the package. Anonymous export tools should omit this field."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional package creation timestamp. Anonymous export tools should omit this field."
+    },
+    "media_root": {
+      "type": "string",
+      "default": "media/",
+      "description": "Recommended package directory for bundled media assets."
+    },
+    "entries": {
+      "type": "array",
+      "description": "Optional list of package entries.",
+      "items": {
+        "$ref": "#/$defs/entry"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "deck",
+            "manifest",
+            "cover",
+            "media",
+            "other"
+          ]
+        },
+        "media_type": {
+          "type": "string",
+          "description": "Optional MIME type or general media type."
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

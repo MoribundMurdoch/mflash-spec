@@ -281,3 +281,36 @@ fn main() -> mflash::Result<()> {
 ```
 
 > Note: the Rust structs should track the schema. If `phonetic`, `part_of_speech`, `id`, or structured media fields are not implemented yet, add them to the Rust model before using this exact example as compiling code.
+
+## Current format status
+
+mflash v2 is the current deck format.
+
+mflash v1 remains documented as a legacy format for compatibility and migration. Applications SHOULD be able to load v1 decks, normalize them, and save newly written decks as v2.
+
+mflash v2 requires stable deck and card IDs:
+
+- deck-level `id`
+- card-level `id`
+
+`created_at` and `updated_at` are optional so decks can be shared anonymously without unnecessary timestamp metadata.
+
+Study progress is stored separately using the `mflash-progress` format.
+
+## Key specs
+
+- `specs/mflash-v2.md` — current deck format
+- `specs/mflash-progress-v1.md` — separate study progress format
+- `specs/ids.md` — deck and card ID guidance
+- `specs/compatibility.md` — reader/writer compatibility behavior
+- `specs/package-layout.md` — packaged `.mflash` archive layout
+- `specs/media-paths.md` — raw and packaged media path rules
+- `specs/validation.md` — validation behavior
+
+## Key schemas
+
+- `schema/mflash-schema.json` — current/latest deck schema
+- `schema/mflash-v2.schema.json` — explicit mflash v2 deck schema
+- `schema/mflash-v1.schema.json` — legacy mflash v1 deck schema
+- `schema/mflash-progress-v1.schema.json` — progress file schema
+- `schema/mflash-package-manifest-v1.schema.json` — optional package manifest schema
