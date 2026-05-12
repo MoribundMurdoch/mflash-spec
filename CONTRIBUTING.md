@@ -3,7 +3,7 @@
 Thank you for your interest in improving the **mflash** file format!  
 This repository defines the *official specification* for `.mflash`, including the formal spec, examples, and JSON schema.
 
-All contributions are welcome—issues, proposals, improvements, and discussions.
+All contributions are welcome: issues, proposals, improvements, and discussions.
 
 ---
 
