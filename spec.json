@@ -1,0 +1,23 @@
+{
+  "name": "mflash",
+  "current_version": 2,
+  "schemas": {
+    "latest": "schema/mflash-schema.json",
+    "1": "schema/mflash-v1.schema.json",
+    "2": "schema/mflash-v2.schema.json",
+    "progress_1": "schema/mflash-progress-v1.schema.json"
+  },
+  "extensions": {
+    "raw_deck": ".mflash.json",
+    "packaged_deck": ".mflash",
+    "progress": ".mflash.progress.json"
+  },
+  "current_deck_format": {
+    "format": "mflash",
+    "version": 2
+  },
+  "progress_format": {
+    "format": "mflash-progress",
+    "version": 1
+  }
+}
