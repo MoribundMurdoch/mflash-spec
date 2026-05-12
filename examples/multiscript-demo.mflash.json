@@ -1,6 +1,6 @@
 {
   "format": "mflash",
-  "version": 1,
+  "version": 2,
   "title": "Bad Hair Ahaha",
   "description": "A very serious multilingual deck about hair whatnot.",
   "snippet": "Hair, language, and assorted follicular situations.",
@@ -109,5 +109,6 @@
         "estonian"
       ]
     }
-  ]
+  ],
+  "id": "deck_bad_hair_ahaha"
 }
