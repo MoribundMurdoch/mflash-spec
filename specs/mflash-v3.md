@@ -1591,3 +1591,580 @@ These candidates are not part of the required v3 baseline unless formally added 
 - [ ] `ordering`
 - [ ] `matching`
 - [ ] `reverse`
+
+## 7. Standardize Media Objects
+
+mflash v3 uses one standard media object shape for deck covers, card images, audio, video, gifs, documents, pronunciation files, prompt media, answer media, and occlusion images.
+
+In mflash v2, media could be represented inconsistently, including as a bare string in some cases. In mflash v3, media should be represented as structured objects.
+
+---
+
+### 7.1 Media object shape
+
+Every media item should use this general shape:
+
+```json
+{
+  "id": "media_001",
+  "type": "image",
+  "role": "illustration",
+  "src": "assets/cards/card_001/image.png",
+  "alt": "A diagram",
+  "description": "Optional longer description",
+  "lang": "en-US"
+}
+```
+
+**Required fields:**
+- `type`
+- `src`
+
+**Optional fields:**
+- `id`
+- `role`
+- `alt`
+- `description`
+- `lang`
+
+---
+
+### 7.2 Required media fields
+
+#### `type`
+The `type` field describes what kind of media file this is.
+
+**Example:**
+```json
+"type": "image"
+```
+
+**Recommended media types:**
+- `image`
+- `audio`
+- `video`
+- `gif`
+- `document`
+- `other`
+
+Applications should use `other` for media that does not fit the official type list.
+
+#### `src`
+The `src` field points to the media file.
+
+For packaged `.mflash` decks, `src` should be a relative path inside the package.
+
+**Example:**
+```json
+"src": "assets/cards/card_001/image.png"
+```
+
+Packaged v3 decks should **not** store absolute local filesystem paths such as:
+```text
+/home/user/Pictures/image.png
+C:\Users\User\Pictures\image.png
+```
+
+Applications may temporarily use absolute paths while editing, but saved packaged decks should ingest the file and rewrite `src` to a relative package path.
+
+---
+
+### 7.3 Optional media fields
+
+#### `id`
+The `id` field is an optional stable identifier for the media item.
+
+**Example:** `"id": "audio_term_001"`
+
+Media IDs should be unique within the object that owns them, such as a card's media array.
+
+#### `role`
+The `role` field describes how the media is used.
+
+**Example:** `"role": "term_pronunciation"`
+
+The media type says what the file is. The media role says what the file is for.
+
+For example, both of these are audio files but have different study behavior:
+```json
+{
+  "type": "audio",
+  "role": "term_pronunciation",
+  "src": "assets/cards/card_001/term.mp3"
+}
+```
+```json
+{
+  "type": "audio",
+  "role": "question_audio",
+  "src": "assets/cards/card_002/question.mp3"
+}
+```
+
+#### `alt`
+The `alt` field provides short alternative text for visual media.
+
+**Example:** `"alt": "Diagram of the human heart"`
+
+Applications should use `alt` for accessibility, search, exports, and fallback display when an image cannot be shown.
+
+#### `description`
+The `description` field provides a longer description of the media item.
+
+**Example:** `"description": "A labeled diagram showing the major chambers and vessels of the heart."`
+
+#### `lang`
+The `lang` field defines the BCP 47 language tag for the media item when language is relevant.
+
+**Example:** `"lang": "fr-FR"`
+
+This is especially useful for:
+- Term pronunciation audio
+- Definition pronunciation audio
+- Question audio
+- Answer audio
+- Example audio
+- Spoken explanations
+- Videos with spoken language
+
+---
+
+### 7.4 Card media is always an array
+
+In mflash v3, card media should always be an array of media objects.
+
+**Valid:**
+```json
+"media": []
+```
+
+**Valid:**
+```json
+"media": [
+  {
+    "id": "img_001",
+    "type": "image",
+    "role": "illustration",
+    "src": "assets/cards/card_001/image.png",
+    "alt": "A diagram"
+  }
+]
+```
+
+**Deprecated v2-style media string:**
+```json
+"media": "image.png"
+```
+
+Applications may support bare media strings when importing or migrating older decks, but v3-authored decks should use media arrays.
+
+---
+
+### 7.5 Recommended media types
+
+mflash v3 defines the following recommended media types:
+
+#### `image`
+Use for still images.  
+**File examples:** `png`, `jpg`, `jpeg`, `webp`, `svg`
+
+```json
+{
+  "id": "img_001",
+  "type": "image",
+  "role": "illustration",
+  "src": "assets/cards/card_001/image.png",
+  "alt": "An illustration"
+}
+```
+
+#### `audio`
+Use for audio files.  
+**File examples:** `mp3`, `wav`, `ogg`, `flac`, `m4a`
+
+```json
+{
+  "id": "audio_term_001",
+  "type": "audio",
+  "role": "term_pronunciation",
+  "src": "assets/cards/card_001/pronunciation.mp3",
+  "lang": "en-US"
+}
+```
+
+#### `video`
+Use for video files.  
+**File examples:** `mp4`, `webm`, `mov`, `mkv`
+
+```json
+{
+  "id": "video_001",
+  "type": "video",
+  "role": "prompt_video",
+  "src": "assets/cards/card_001/clip.mp4",
+  "description": "A short video prompt."
+}
+```
+
+#### `gif`
+Use for animated gifs when the file should be treated as a gif rather than a generic image.
+
+```json
+{
+  "id": "gif_001",
+  "type": "gif",
+  "role": "prompt_animation",
+  "src": "assets/cards/card_001/process.gif",
+  "alt": "Animated process diagram"
+}
+```
+
+#### `document`
+Use for attached documents.  
+**File examples:** `pdf`, `txt`, `html`, `md`
+
+```json
+{
+  "id": "doc_001",
+  "type": "document",
+  "role": "source_document",
+  "src": "assets/cards/card_001/source.pdf",
+  "description": "A source document for the card."
+}
+```
+
+#### `other`
+Use when none of the official media types apply.
+
+```json
+{
+  "id": "file_001",
+  "type": "other",
+  "role": "supplement",
+  "src": "assets/cards/card_001/file.bin"
+}
+```
+
+---
+
+### 7.6 Recommended media roles
+
+mflash v3 defines the following recommended media roles:
+
+- `cover`
+- `illustration`
+- `prompt_image`
+- `answer_image`
+- `prompt_video`
+- `answer_video`
+- `prompt_animation`
+- `answer_animation`
+- `term_pronunciation`
+- `definition_pronunciation`
+- `question_audio`
+- `answer_audio`
+- `example_audio`
+- `explanation_audio`
+- `occlusion_image`
+- `source_document`
+- `supplement`
+
+**Initial recommended role set:**
+- `cover`
+- `illustration`
+- `prompt_image`
+- `answer_image`
+- `term_pronunciation`
+- `definition_pronunciation`
+- `question_audio`
+- `answer_audio`
+- `example_audio`
+- `explanation_audio`
+- `occlusion_image`
+
+---
+
+### 7.7 Role descriptions
+
+#### `cover`
+Use for a deck cover image.
+```json
+{
+  "id": "cover_001",
+  "type": "image",
+  "role": "cover",
+  "src": "assets/deck/cover.png",
+  "alt": "Deck cover image"
+}
+```
+
+#### `illustration`
+Use for supporting card imagery.
+```json
+{
+  "id": "img_001",
+  "type": "image",
+  "role": "illustration",
+  "src": "assets/cards/card_001/illustration.png",
+  "alt": "A supporting illustration"
+}
+```
+
+#### `prompt_image`
+Use when an image is the question or prompt.
+```json
+{
+  "id": "prompt_img_001",
+  "type": "image",
+  "role": "prompt_image",
+  "src": "assets/cards/card_001/prompt.png",
+  "alt": "Image prompt"
+}
+```
+
+#### `answer_image`
+Use when an image is part of the answer.
+```json
+{
+  "id": "answer_img_001",
+  "type": "image",
+  "role": "answer_image",
+  "src": "assets/cards/card_001/answer.png",
+  "alt": "Answer image"
+}
+```
+
+#### `term_pronunciation`
+Use for uploaded pronunciation audio for a card's term.
+```json
+{
+  "id": "audio_term_001",
+  "type": "audio",
+  "role": "term_pronunciation",
+  "src": "assets/cards/card_001/term.mp3",
+  "lang": "fr-FR"
+}
+```
+
+#### `definition_pronunciation`
+Use for uploaded pronunciation audio for a card's definition.
+```json
+{
+  "id": "audio_def_001",
+  "type": "audio",
+  "role": "definition_pronunciation",
+  "src": "assets/cards/card_001/definition.mp3",
+  "lang": "en-US"
+}
+```
+
+#### `question_audio`
+Use when audio is the main question or prompt.
+```json
+{
+  "id": "audio_question_001",
+  "type": "audio",
+  "role": "question_audio",
+  "src": "assets/cards/card_001/question.mp3",
+  "lang": "fr-FR"
+}
+```
+
+#### `answer_audio`
+Use when audio is part of the answer.
+```json
+{
+  "id": "audio_answer_001",
+  "type": "audio",
+  "role": "answer_audio",
+  "src": "assets/cards/card_001/answer.mp3",
+  "lang": "fr-FR"
+}
+```
+
+#### `example_audio`
+Use for audio attached to an example sentence or usage example.
+```json
+{
+  "id": "audio_example_001",
+  "type": "audio",
+  "role": "example_audio",
+  "src": "assets/cards/card_001/example.mp3",
+  "lang": "fr-FR"
+}
+```
+
+#### `explanation_audio`
+Use for spoken explanations.
+```json
+{
+  "id": "audio_explanation_001",
+  "type": "audio",
+  "role": "explanation_audio",
+  "src": "assets/cards/card_001/explanation.mp3",
+  "lang": "en-US"
+}
+```
+
+#### `occlusion_image`
+Use for the base image in an image occlusion card.
+```json
+{
+  "id": "heart_img",
+  "type": "image",
+  "role": "occlusion_image",
+  "src": "assets/cards/card_heart_001/heart.png",
+  "alt": "Diagram of the human heart"
+}
+```
+
+---
+
+### 7.8 Media path rules
+
+In packaged `.mflash` decks, media paths should be relative to the package root.
+
+**Valid:**
+```text
+assets/deck/cover.png
+assets/cards/card_001/image.png
+assets/cards/card_001/pronunciation.mp3
+```
+
+**Invalid for released packaged decks:**
+```text
+/home/user/Pictures/image.png
+C:\Users\User\Pictures\image.png
+../outside-folder/image.png
+```
+
+Media paths should not escape the package root. Applications should reject or sanitize path traversal patterns such as:
+- `../`
+- `..\`
+
+---
+
+### 7.9 Media ownership
+
+**Deck-level media** belongs under:
+```text
+assets/deck/
+```
+
+**Card-level media** belongs under:
+```text
+assets/cards/<card_id>/
+```
+
+**Example structure:**
+```text
+deck.json
+assets/
+  deck/
+    cover.png
+  cards/
+    card_001/
+      lative.mp3
+      illustration.png
+```
+
+A card should not normally reference another card's asset directory.
+
+**Discouraged:**
+```json
+{
+  "id": "card_002",
+  "kind": "basic",
+  "media": [
+    {
+      "type": "image",
+      "src": "assets/cards/card_001/image.png"
+    }
+  ]
+}
+```
+
+Shared assets may be supported later with an explicit shared asset directory, but the initial v3 convention is card-local media.
+
+---
+
+### 7.10 Migration from v2 media
+
+v2 media may appear as a bare string or older object shape.
+
+**v2-style bare string:**
+```json
+"media": "image.png"
+```
+
+**v3 migrated form:**
+```json
+"media": [
+  {
+    "type": "image",
+    "role": "illustration",
+    "src": "assets/cards/card_001/image.png"
+  }
+]
+```
+
+**v2-style card image:**
+```json
+"media": {
+  "type": "image",
+  "path": "image.png",
+  "alt": "An image"
+}
+```
+
+**v3 migrated form:**
+```json
+"media": [
+  {
+    "type": "image",
+    "role": "illustration",
+    "src": "assets/cards/card_001/image.png",
+    "alt": "An image"
+  }
+]
+```
+
+**When migrating from v2 to v3:**
+- `path` should become `src`
+- Bare strings should become media objects
+- Card media should become an array
+- Deck `cover_media` should become `deck.cover`
+
+---
+
+### 7.11 Media object checklist
+
+- [x] Media object requires `type` and `src`.
+- [x] Media object may have `id`.
+- [x] Media object may have `role`.
+- [x] Media object may have `alt`.
+- [x] Media object may have `description`.
+- [x] Media object may have `lang`.
+- [x] Card media is always an array.
+- [x] Remove or deprecate media as a bare string.
+
+**Recommended media types:**
+- [x] `image`
+- [x] `audio`
+- [x] `video`
+- [x] `gif`
+- [x] `document`
+- [x] `other`
+
+**Recommended media roles:**
+- [x] `cover`
+- [x] `illustration`
+- [x] `prompt_image`
+- [x] `answer_image`
+- [x] `term_pronunciation`
+- [x] `definition_pronunciation`
+- [x] `question_audio`
+- [x] `answer_audio`
+- [x] `example_audio`
+- [x] `explanation_audio`
+- [x] `occlusion_image`
