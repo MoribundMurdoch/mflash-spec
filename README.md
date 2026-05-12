@@ -24,6 +24,53 @@ In packaged form, the deck JSON is stored as `deck.json` inside a `.mflash` arch
 
 This crate follows the [`mflash-spec`](https://github.com/your-user-or-org/mflash-spec) v1 specification.
 
+## mflash v3 Draft
+
+mflash v3 is the next major version of the mflash study deck format.
+
+It expands mflash from a term-definition flashcard format into a more versatile study deck format with typed cards, organized packaged assets, polyglot language metadata, pronunciation audio, and image occlusion.
+
+Core v3 changes:
+
+```text
+- Decks still use deck.json as the source of truth.
+- Packaged .mflash files are ZIP archives.
+- deck.json lives at the archive root.
+- Assets live under assets/.
+- Deck assets live under assets/deck/.
+- Card assets live under assets/cards/<card_id>/.
+- Cards now require kind.
+- term and definition are no longer globally required for every card.
+- Basic flashcards use kind: "basic".
+- Media objects are structured and reusable.
+- Deck cover metadata uses a structured cover object.
+- Pronunciation audio is supported through media roles.
+- Image occlusion is supported through kind: "image_occlusion".
+- Polyglot deck/card/media language support remains.
+- Unknown extra fields and extensions may be preserved for forward compatibility.
+```
+
+Example v3 deck header:
+
+```json
+{
+  "format": "mflash",
+  "version": 3,
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Example Deck",
+  "cards": []
+}
+```
+
+See:
+
+- `specs/mflash-v3.md`
+- `schema/mflash-v3-schema.json`
+- `examples/v3-basic-deck/`
+- `examples/v3-image-occlusion/`
+
+mflash v3 is currently draft unless otherwise noted.
+
 ## Deck representations
 
 ### Raw developer format
@@ -299,6 +346,7 @@ Study progress is stored separately using the `mflash-progress` format.
 
 ## Key specs
 
+- `specs/mflash-v3.md` — draft format
 - `specs/mflash-v2.md` — current deck format
 - `specs/mflash-progress-v1.md` — separate study progress format
 - `specs/ids.md` — deck and card ID guidance
@@ -310,6 +358,7 @@ Study progress is stored separately using the `mflash-progress` format.
 ## Key schemas
 
 - `schema/mflash-schema.json` — current/latest deck schema
+- `schema/mflash-v3-schema.json` — draft mflash v3 deck schema
 - `schema/mflash-v2.schema.json` — explicit mflash v2 deck schema
 - `schema/mflash-v1.schema.json` — legacy mflash v1 deck schema
 - `schema/mflash-progress-v1.schema.json` — progress file schema
