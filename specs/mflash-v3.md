@@ -2168,3 +2168,328 @@ v2 media may appear as a bare string or older object shape.
 - [x] `example_audio`
 - [x] `explanation_audio`
 - [x] `occlusion_image`
+
+## 8. Pronunciation Audio Support
+
+mflash v3 officially supports uploaded pronunciation audio.
+
+Pronunciation audio allows a deck author to attach recorded or generated audio files to cards. Applications may use these files instead of generated text-to-speech when studying, reviewing, or previewing cards.
+
+Pronunciation audio is represented using standard media objects with `type: "audio"` and a pronunciation-specific `role`.
+
+---
+
+### 8.1 Term pronunciation audio
+
+Use `role: "term_pronunciation"` for audio that pronounces a card's term.
+
+**Example:**
+```json
+{
+  "id": "audio_term_001",
+  "type": "audio",
+  "role": "term_pronunciation",
+  "src": "assets/cards/card_001/lative.mp3",
+  "lang": "en-US"
+}
+```
+
+**Recommended use:**
+- Vocabulary words
+- Names
+- Technical terms
+- Foreign-language terms
+- Phonetic drills
+
+**For a basic card:**
+```json
+{
+  "id": "card_001",
+  "kind": "basic",
+  "term": "Lative",
+  "definition": "Indicating motion up to or as far as.",
+  "term_lang": "en-US",
+  "media": [
+    {
+      "id": "audio_term_001",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_001/lative.mp3",
+      "lang": "en-US"
+    }
+  ]
+}
+```
+
+---
+
+### 8.2 Definition pronunciation audio
+
+Use `role: "definition_pronunciation"` for audio that pronounces a card's definition.
+
+**Example:**
+```json
+{
+  "id": "audio_definition_001",
+  "type": "audio",
+  "role": "definition_pronunciation",
+  "src": "assets/cards/card_001/definition.mp3",
+  "lang": "en-US"
+}
+```
+
+**This is useful for:**
+- Accessibility
+- Language-learning definitions
+- Spoken explanations
+- Hands-free study
+
+**Example:**
+```json
+{
+  "id": "card_002",
+  "kind": "basic",
+  "term": "bonjour",
+  "definition": "hello",
+  "term_lang": "fr-FR",
+  "def_lang": "en-US",
+  "media": [
+    {
+      "id": "audio_term_001",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_002/bonjour.mp3",
+      "lang": "fr-FR"
+    },
+    {
+      "id": "audio_def_001",
+      "type": "audio",
+      "role": "definition_pronunciation",
+      "src": "assets/cards/card_002/hello.mp3",
+      "lang": "en-US"
+    }
+  ]
+}
+```
+
+---
+
+### 8.3 Example audio
+
+Use `role: "example_audio"` for audio attached to an example sentence or usage example.
+
+**Example:**
+```json
+{
+  "id": "audio_example_001",
+  "type": "audio",
+  "role": "example_audio",
+  "src": "assets/cards/card_001/example.mp3",
+  "lang": "fr-FR"
+}
+```
+
+If an application needs to associate audio with a specific example, it may use an extension field such as `example_id` or place the audio reference inside a structured example object.
+
+**Example with `example_id`:**
+```json
+{
+  "id": "audio_example_001",
+  "type": "audio",
+  "role": "example_audio",
+  "src": "assets/cards/card_001/example_001.mp3",
+  "lang": "fr-FR",
+  "example_id": "example_001"
+}
+```
+
+**Example structured example:**
+```json
+{
+  "id": "example_001",
+  "text": "Je voudrais du café.",
+  "translation": "I would like some coffee.",
+  "lang": "fr-FR",
+  "translation_lang": "en-US",
+  "media": [
+    {
+      "id": "audio_example_001",
+      "type": "audio",
+      "role": "example_audio",
+      "src": "assets/cards/card_001/example_001.mp3",
+      "lang": "fr-FR"
+    }
+  ]
+}
+```
+
+Applications may support either pattern. The shared media object shape remains the same.
+
+---
+
+### 8.4 Question audio for listening cards
+
+Use `role: "question_audio"` for audio that acts as the main prompt in a listening card.
+
+**Example:**
+```json
+{
+  "id": "audio_question_001",
+  "type": "audio",
+  "role": "question_audio",
+  "src": "assets/cards/card_listening_001/bonjour.mp3",
+  "lang": "fr-FR"
+}
+```
+
+**Listening card example:**
+```json
+{
+  "id": "card_listening_001",
+  "kind": "listening",
+  "prompt": "What word do you hear?",
+  "answer": "bonjour",
+  "media": [
+    {
+      "id": "audio_question_001",
+      "type": "audio",
+      "role": "question_audio",
+      "src": "assets/cards/card_listening_001/bonjour.mp3",
+      "lang": "fr-FR"
+    }
+  ],
+  "tags": ["french", "listening"]
+}
+```
+
+---
+
+### 8.5 File audio and TTS fallback
+
+Applications may support both uploaded audio files and generated text-to-speech (TTS).
+
+**Recommended behavior:**
+1. Prefer uploaded audio when file audio is enabled and matching audio exists.
+2. Fall back to TTS when uploaded audio is missing, disabled, or cannot be played.
+3. Use mflash language fallback rules when generating TTS.
+
+This allows users to choose between recorded pronunciation and generated speech.
+
+**Example app controls:**
+- File audio: `enabled` / `disabled`
+- TTS: `enabled` / `disabled`
+
+---
+
+### 8.6 Suggested playback order for basic cards
+
+For a basic card with `term` and `definition`, the recommended playback order is:
+
+1. If file audio is enabled and `term_pronunciation` exists, play that file.
+2. Else if TTS is enabled, speak `term` using the term language fallback.
+3. If file audio is enabled and `definition_pronunciation` exists, play that file.
+4. Else if TTS is enabled, speak `definition` using the definition language fallback.
+
+**Term language fallback chain:**
+1. `term` pronunciation media `lang`
+2. `card.term_lang`
+3. `deck.default_term_lang`
+4. Application fallback
+
+**Definition language fallback chain:**
+1. `definition` pronunciation media `lang`
+2. `card.def_lang`
+3. `deck.default_def_lang`
+4. Application fallback
+
+---
+
+### 8.7 Multiple pronunciation files
+
+A card may include multiple pronunciation files when useful.
+
+**Examples:**
+- Different speakers
+- Different accents
+- Slow pronunciation
+- Natural pronunciation
+- Regional variants
+
+**Example:**
+```json
+{
+  "id": "card_003",
+  "kind": "basic",
+  "term": "tomato",
+  "definition": "A red edible fruit often used as a vegetable.",
+  "term_lang": "en-US",
+  "media": [
+    {
+      "id": "audio_term_us",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_003/tomato-us.mp3",
+      "lang": "en-US",
+      "variant": "US"
+    },
+    {
+      "id": "audio_term_uk",
+      "type": "audio",
+      "role": "term_pronunciation",
+      "src": "assets/cards/card_003/tomato-uk.mp3",
+      "lang": "en-GB",
+      "variant": "UK"
+    }
+  ]
+}
+```
+
+Applications may choose the best matching audio by language, user preference, order in the media array, or app-specific settings.
+
+---
+
+### 8.8 Audio file location
+
+Card pronunciation audio should be stored under the card's asset directory:
+```text
+assets/cards/<card_id>/
+```
+
+**Example paths:**
+```text
+assets/cards/card_001/lative.mp3
+assets/cards/card_001/definition.mp3
+assets/cards/card_001/example_001.mp3
+```
+
+In packaged `.mflash` decks, audio `src` paths should be relative package paths.
+
+**Valid:**
+```text
+assets/cards/card_001/lative.mp3
+```
+
+**Invalid for released packaged decks:**
+```text
+/home/user/Audio/lative.mp3
+C:\Users\User\Audio\lative.mp3
+../outside-folder/lative.mp3
+```
+
+---
+
+### 8.9 Audio support checklist
+
+- [x] Add `term_pronunciation` media role.
+- [x] Add `definition_pronunciation` media role.
+- [x] Add `example_audio` media role.
+- [x] Add `question_audio` media role for listening cards.
+- [x] Document file audio vs TTS fallback.
+- [x] App should prefer uploaded pronunciation if enabled.
+- [x] App should fall back to TTS if no uploaded audio exists.
+
+**Suggested playback order:**
+- [x] If file audio enabled and `term_pronunciation` exists, play file.
+- [x] Else if TTS enabled, speak term using card/deck language.
+- [x] If file audio enabled and `definition_pronunciation` exists, play file.
+- [x] Else if TTS enabled, speak definition using card/deck language.
