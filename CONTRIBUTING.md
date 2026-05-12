@@ -80,6 +80,7 @@ Any `.mflash` example in the `examples/` folder should:
 ```bash
 npm install -g ajv-cli
 ajv validate -s schema/mflash-schema.json -d "examples/*.mflash"
+```
 
 ## Alternative validation methods
 You don't have to use ajv. Any JSON Schema validator works:
