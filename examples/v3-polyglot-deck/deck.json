@@ -1,0 +1,70 @@
+{
+  "format": "mflash",
+  "version": 3,
+  "id": "550e8400-e29b-41d4-a716-446655480000",
+  "title": "mflash v3 Polyglot Example",
+  "description": "A deck showing deck-level language defaults, card-level overrides, and media-level language.",
+  "snippet": "Polyglot language fallback example.",
+  "default_term_lang": "fr-FR",
+  "default_def_lang": "en-US",
+  "deck_tags": ["example", "polyglot", "language"],
+  "cover": {
+    "id": "550e8400-e29b-41d4-a716-446655480010",
+    "type": "image",
+    "role": "cover",
+    "src": "assets/deck/cover.png",
+    "alt": "Polyglot example cover"
+  },
+  "cards": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655480001",
+      "kind": "basic",
+      "term": "bonjour",
+      "definition": "hello",
+      "media": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655480020",
+          "type": "audio",
+          "role": "term_pronunciation",
+          "src": "assets/cards/550e8400-e29b-41d4-a716-446655480001/bonjour.mp3",
+          "lang": "fr-FR"
+        }
+      ],
+      "examples": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655480030",
+          "text": "Bonjour, je m'appelle Moribund.",
+          "translation": "Hello, my name is Moribund.",
+          "lang": "fr-FR",
+          "translation_lang": "en-US"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655480002",
+      "kind": "basic",
+      "term": "Weltanschauung",
+      "definition": "worldview",
+      "term_lang": "de-DE",
+      "def_lang": "en-US",
+      "media": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655480021",
+          "type": "audio",
+          "role": "term_pronunciation",
+          "src": "assets/cards/550e8400-e29b-41d4-a716-446655480002/weltanschauung.mp3",
+          "lang": "de-DE"
+        }
+      ],
+      "examples": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655480031",
+          "text": "Seine Weltanschauung war schwer zu erklären.",
+          "translation": "His worldview was difficult to explain.",
+          "lang": "de-DE",
+          "translation_lang": "en-US"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "format": "mflash",
+  "version": 3,
+  "id": "550e8400-e29b-41d4-a716-446655470000",
+  "title": "mflash v3 Media Prompt Example",
+  "description": "A deck showing image, gif, and video media prompts.",
+  "snippet": "Media prompt example.",
+  "default_term_lang": "en-US",
+  "default_def_lang": "en-US",
+  "deck_tags": ["example", "media_prompt"],
+  "cover": {
+    "id": "550e8400-e29b-41d4-a716-446655470010",
+    "type": "image",
+    "role": "cover",
+    "src": "assets/deck/cover.png",
+    "alt": "Media prompt example cover"
+  },
+  "cards": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655470001",
+      "kind": "media_prompt",
+      "prompt": "What process is shown in this animation?",
+      "answer": "Mitosis",
+      "media": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655470020",
+          "type": "gif",
+          "role": "prompt_animation",
+          "src": "assets/cards/550e8400-e29b-41d4-a716-446655470001/mitosis.gif",
+          "alt": "Animated diagram of mitosis"
+        }
+      ],
+      "tags": ["biology", "cell division"]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655470002",
+      "kind": "media_prompt",
+      "prompt": "Which architectural style is shown in this image?",
+      "answer": "Gothic",
+      "media": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655470021",
+          "type": "image",
+          "role": "prompt_image",
+          "src": "assets/cards/550e8400-e29b-41d4-a716-446655470002/cathedral.png",
+          "alt": "A cathedral with pointed arches",
+          "description": "Image prompt for identifying an architectural style."
+        }
+      ],
+      "tags": ["architecture", "art history"]
+    }
+  ]
+}
