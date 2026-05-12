@@ -80,3 +80,12 @@ Any `.mflash` example in the `examples/` folder should:
 ```bash
 npm install -g ajv-cli
 ajv validate -s schema/mflash-schema.json -d "examples/*.mflash"
+
+## Alternative validation methods
+You don't have to use ajv. Any JSON Schema validator works:
+
+- Online tools – paste your schema and JSON into websites like jsonschemavalidator.net
+
+- Editor plugins – VS Code, IntelliJ, etc. can validate live if you add "$schema": "path/to/mflash-schema.json" inside your .mflash file.
+
+- Other CLI tools – check-jsonschema, speclate, or custom scripts.
