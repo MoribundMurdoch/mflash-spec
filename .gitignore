@@ -7,3 +7,4 @@ Thumbs.db
 # Ignore build tools that may be added later
 /target/
 /dist/
+scripts/__pycache__/

@@ -1,0 +1,215 @@
+// This is free and unencumbered software released into the public domain.
+// For more information, please refer to <https://unlicense.org/>
+
+syntax = "proto3";
+
+package mflash.v4;
+
+// ---------------------------------------------------------
+// ENUMS (Replacing JSON string enums for massive space savings)
+// ---------------------------------------------------------
+
+enum CardKind {
+  KIND_UNSPECIFIED = 0;
+  KIND_BASIC = 1;
+  KIND_IMAGE_OCCLUSION = 2;
+  KIND_LISTENING = 3;
+  KIND_MEDIA_PROMPT = 4;
+}
+
+enum MediaType {
+  MEDIA_TYPE_UNSPECIFIED = 0;
+  MEDIA_TYPE_IMAGE = 1;
+  MEDIA_TYPE_AUDIO = 2;
+  MEDIA_TYPE_VIDEO = 3;
+  MEDIA_TYPE_GIF = 4;
+  MEDIA_TYPE_DOCUMENT = 5;
+  MEDIA_TYPE_OTHER = 6;
+}
+
+enum MediaRole {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_COVER = 1;
+  ROLE_ILLUSTRATION = 2;
+  ROLE_PROMPT_IMAGE = 3;
+  ROLE_ANSWER_IMAGE = 4;
+  ROLE_PROMPT_VIDEO = 5;
+  ROLE_ANSWER_VIDEO = 6;
+  ROLE_PROMPT_ANIMATION = 7;
+  ROLE_ANSWER_ANIMATION = 8;
+  ROLE_TERM_PRONUNCIATION = 9;
+  ROLE_DEFINITION_PRONUNCIATION = 10;
+  ROLE_QUESTION_AUDIO = 11;
+  ROLE_ANSWER_AUDIO = 12;
+  ROLE_EXAMPLE_AUDIO = 13;
+  ROLE_EXPLANATION_AUDIO = 14;
+  ROLE_OCCLUSION_IMAGE = 15;
+  ROLE_SOURCE_DOCUMENT = 16;
+  ROLE_SUPPLEMENT = 17;
+}
+
+enum MorphemeType {
+  MORPHEME_UNSPECIFIED = 0;
+  MORPHEME_PREFIX = 1;
+  MORPHEME_ROOT = 2;
+  MORPHEME_STEM = 3;
+  MORPHEME_SUFFIX = 4;
+  MORPHEME_INFIX = 5;
+  MORPHEME_CIRCUMFIX = 6;
+  MORPHEME_COMBINING_FORM = 7;
+  MORPHEME_PARTICLE = 8;
+  MORPHEME_OTHER = 9;
+}
+
+// ---------------------------------------------------------
+// CORE MESSAGES
+// ---------------------------------------------------------
+
+message Deck {
+  string format = 1; // Always "mflash"
+  int32 version = 2; // Always 4 for this schema
+  string id = 3;     // UUID
+  string title = 4;
+  
+  optional string description = 5;
+  optional string snippet = 6;
+  
+  // Unix timestamps (int64) are vastly faster to parse than ISO8601 strings
+  optional int64 created_at_ts = 7; 
+  optional int64 updated_at_ts = 8;
+  
+  optional string default_term_lang = 9;
+  optional string default_def_lang = 10;
+  
+  repeated string deck_tags = 11;
+  
+  optional Media cover = 12;
+  repeated Card cards = 13;
+  
+  // Extensions: Key is the namespace (e.g., "org.mflash.app")
+  // Value is a stringified JSON object for ultimate flexibility.
+  map<string, string> extensions = 14;
+}
+
+message Card {
+  string id = 1;
+  CardKind kind = 2;
+  
+  optional string prompt = 3;
+  optional string answer = 4;
+  optional string term = 5;
+  optional string definition = 6;
+  
+  optional string term_lang = 7;
+  optional string def_lang = 8;
+  optional string phonetic = 9;
+  optional string part_of_speech = 10;
+  
+  optional Lexical lexical = 11;
+  optional string notes = 12;
+  optional string hyperlink = 13;
+  
+  repeated Media media = 14;
+  repeated string tags = 15;
+  repeated Example examples = 16;
+  
+  optional Occlusion occlusion = 17;
+  map<string, string> extensions = 18;
+}
+
+// ---------------------------------------------------------
+// SUPPORTING MESSAGES
+// ---------------------------------------------------------
+
+message Media {
+  optional string id = 1;
+  MediaType type = 2;
+  MediaRole role = 3;
+  string src = 4; // e.g. "assets/cards/card_001/image.png"
+  optional string alt = 5;
+  optional string description = 6;
+  optional string lang = 7;
+  map<string, string> extensions = 8;
+}
+
+message Lexical {
+  optional string etymology = 1;
+  repeated Morpheme morphology = 2;
+  optional string ipa = 3;
+  optional string phonetic = 4;
+  optional string romanization = 5;
+  optional string register = 6;
+  optional string usage_note = 7;
+  repeated string related_terms = 8;
+  optional string language = 9;
+  map<string, string> extensions = 10;
+}
+
+message Morpheme {
+  optional string form = 1;
+  MorphemeType type = 2;
+  optional string meaning = 3;
+  optional string origin = 4;
+  optional string lang = 5;
+  map<string, string> extensions = 6;
+}
+
+message Example {
+  optional string id = 1;
+  string text = 2;
+  optional string translation = 3;
+  optional string lang = 4;
+  optional string translation_lang = 5;
+  repeated Media media = 6;
+  map<string, string> extensions = 7;
+}
+
+// ---------------------------------------------------------
+// IMAGE OCCLUSION
+// ---------------------------------------------------------
+
+message Occlusion {
+  Media image = 1;
+  repeated OcclusionMask masks = 2;
+  map<string, string> extensions = 3;
+}
+
+message OcclusionMask {
+  string id = 1;
+  string answer = 2;
+  optional string hint = 3;
+  optional string explanation = 4;
+  
+  // 'oneof' replaces the complex JSON Schema "allOf / if / then" logic.
+  // It guarantees that a mask is exactly ONE of these shapes.
+  oneof shape {
+    RectMask rect = 5;
+    EllipseMask ellipse = 6;
+    PolygonMask polygon = 7;
+  }
+  
+  map<string, string> extensions = 8;
+}
+
+message RectMask {
+  float x = 1;
+  float y = 2;
+  float w = 3;
+  float h = 4;
+}
+
+message EllipseMask {
+  float x = 1;
+  float y = 2;
+  float w = 3;
+  float h = 4;
+}
+
+message PolygonMask {
+  repeated Point points = 1;
+}
+
+message Point {
+  float x = 1;
+  float y = 2;
+}
